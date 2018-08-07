@@ -1,9 +1,9 @@
 from django.views.generic import (TemplateView)
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 from django.core.mail import send_mail  # noqa
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 '''
 The following views (prefixed "Web") are the legacy
@@ -12,6 +12,13 @@ a) it's not a big job
 b) some of them require integration with the new app
 c) all of them require static files handling.
 '''
+
+
+class UserLogoutView(View):
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            logout(request)
+        return redirect('/Restricted/')
 
 
 class WebAnnouncementView(TemplateView):
@@ -26,6 +33,13 @@ class WebLogin(View):
     template_name = 'legacy/restricted_login.html'
 
     def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            if request.user.is_active:
+                if request.user.is_staff:
+                    return redirect('/editor/')
+                else:
+                    return redirect('/user/')
+
         return render(request, self.template_name, {})
 
     def post(self, request, *args, **kwargs):
@@ -50,7 +64,10 @@ class WebLogin(View):
         if user is not None:
             if user.is_active:
                 login(request, user)
-                # Redirect to a success page.
+                if user.is_staff:
+                    return redirect('/editor/')
+                else:
+                    return redirect('/user/')
             else:
                 return render(request, self.template_name, {
                     'error': "Your account is not yet active",
