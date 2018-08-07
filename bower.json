@@ -1,0 +1,14 @@
+{
+    "name": "humanist",
+    "version": "0.1",
+    "dependencies": {
+    },
+    "main": "assets/js/main.js",
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "test",
+        "tests"
+    ]
+}

@@ -1,0 +1,140 @@
+{% load staticfiles %}
+<html>
+<head>
+<title>Humanist Membership Application</title>
+<STYLE TYPE="TEXT/CSS">
+<!--
+BODY,UL,DL,OL {
+	font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11pt;
+	vertical-align: top;
+	margin-left: 30px;
+	margin-right: 30px;
+}
+table.f {
+        padding-left: 10px;
+        width: 100%;
+}
+td.t {
+	font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11pt;
+    text-align: left;
+	vertical-align: top;
+    width: 20%;
+}
+input, textarea {
+	font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11pt;
+}
+span.ast {
+    color: red;
+    font-size: 11pt;
+    font-weight: bold;
+}
+-->
+</STYLE>
+</head>
+<body background="{% static 'images/strip.gif' %}">
+<center>
+<table border cellpadding=5>
+<td align=center><A HREF="/" border=off><B>Home</B></A></td>
+<td align=center><A HREF="/announcement.html" border=off><B>About</B></A></td> 
+<td align=center> <A
+HREF="/membership_form.php"><B>Subscribe</B></A></td> 
+<td align=center><a href="/search.html"><B>Search</B></a></td>
+<td align=center> <A HREF="/Restricted/"><B>Member Area</B></A></td>
+</table>
+</center><p>&nbsp;<p>
+<center>
+<H2>Humanist Membership Application</H2>
+</center>
+
+<p><br>
+
+
+
+Please fill out this form and submit it.   The fields marked <span class=ast>*</span> are obligatory.
+<p><br>
+<form action="/membership_form.php" method="POST">
+<input type="hidden" name="type" value="">
+<table class=f>
+<tr>
+<td class=t>
+<b>First Name: <span class=ast>*</span></b>
+</td>
+<td>
+<input type="text" name="firstname" size="40" maxlength="80" style="font-family: Helvetica, Arial, sans-serif" value="">
+</td>
+</tr>
+<tr>
+<td class=t>
+<b>Last Name: <span class=ast>*</span></b>
+</td>
+<td>
+<input type="text" name="lastname" size="40" maxlength="80" style="font-family: Helvetica, Arial, sans-serif" value="">
+</td>
+</tr>
+<tr>
+<td class=t>
+<b>Middle Initial:</b>
+</td>
+<td>
+<input type="text" name="middleinit" size="3" maxlength="3" style="font-family: Helvetica, Arial, sans-serif" value="">
+</td>
+</tr>
+<tr>
+<td class=t>
+<b>Email: <span class=ast>*</span></b>
+</td>
+<td>
+<input type="text" name="email" size="40" maxlength="50" style="font-family: Helvetica, Arial, sans-serif" value="">
+</td>
+</tr>
+<tr>
+<td class=t>
+<b>Desired Password: <span class=ast>*</span></b>
+</td>
+<td>
+<input type="password" name="password" size="20" maxlength="20" style="font-family: Helvetica, Arial, sans-serif" value="">
+</td>
+</tr>
+<tr>
+<td class=t>
+<b>Retype Password: <span class=ast>*</span></b>
+</td>
+<td>
+<input type="password" name="password2" size="20" maxlength="20" style="font-family: Helvetica, Arial, sans-serif" value="">
+</td>
+</tr>
+<tr>
+<td class=t>
+<b>URL:</b>
+</td>
+<td>
+<input type="text" name="url" size="80" maxlength="200" style="font-family: Helvetica, Arial, sans-serif" value="">
+</td>
+</tr>
+<tr>
+<td class=t>
+<b>Short Bio: <span class=ast>*</span></b>
+</td>
+<td>
+<textarea name="bioblurb" rows=20 cols=80 wrap="hard" style="font-family: Helvetica, Arial, sans-serif"></textarea>
+<p><br>
+</td>
+</tr>
+<tr>
+<td class=t>
+<b>&nbsp;</b>
+</td>
+<td>
+<input type="submit" value="SUBMIT FORM">
+
+</td>
+</tr>
+</table>
+</form>
+
+</body>
+</html>
+

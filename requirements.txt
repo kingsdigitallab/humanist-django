@@ -1,0 +1,10 @@
+django == 2.0
+django-compressor
+django-extensions
+django-libsass
+django-model-utils
+django-redis
+psycopg2-binary
+redis
+
+
