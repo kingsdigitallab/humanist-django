@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from .helpers import Email # noqa
 
+from .models import Subscriber
+
 '''
 The following views (prefixed "Web") are the legacy
 website. I've converted them to views because:
@@ -143,6 +145,12 @@ class WebMembershipFormView(View):
         user.is_superuser = False
         user.set_password(request.POST['password'])
         user.save()
+
+        # create subscriber infomation
+        sub = Subscriber()
+        sub.user = user
+        sub.bio = request.POST['bioblurb']
+        sub.save()
 
         # TODO - send email for verification
 
