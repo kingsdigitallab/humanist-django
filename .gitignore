@@ -63,3 +63,4 @@ local.py
 #local_*.py
 logs/
 static/
+private_data/
