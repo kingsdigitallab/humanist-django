@@ -1,4 +1,9 @@
 from django.views.generic import (TemplateView)
+from django.shortcuts import render
+from django.views import View
+from django.core.mail import send_mail  # noqa
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
 
 '''
 The following views (prefixed "Web") are the legacy
@@ -17,9 +22,117 @@ class WebHomepageView(TemplateView):
     template_name = 'legacy/index.html'
 
 
+class WebLogin(View):
+    template_name = 'legacy/restricted_login.html'
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {})
+
+    def post(self, request, *args, **kwargs):
+        required_fields = ['username', 'password']
+
+        for field in required_fields:
+            if field not in request.POST:
+                return render(request, self.template_name, {
+                    'error': "There was an error with the form"})
+
+        for field in required_fields:
+            if not request.POST[field]:
+                return render(request, self.template_name, {
+                    'error': "A field was missing",
+                    'username': request.POST['username'],
+                })
+
+        username = request.POST['username']
+        password = request.POST['password']
+
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                # Redirect to a success page.
+            else:
+                return render(request, self.template_name, {
+                    'error': "Your account is not yet active",
+                    'username': request.POST['username'],
+                })
+        else:
+            # Return an 'invalid login' error message.
+            return render(request, self.template_name, {
+                'error': "Incorrect username (email) or password",
+                'username': request.POST['username'],
+            })
+
+        # TODO - send email for verification
+        return render(request, self.template_name, {
+            'success': 'Your account has been created,\
+            it will be reviewed by an administrator shortly.'})
+
+
 class WebQuackView(TemplateView):
     template_name = 'legacy/quack.html'
 
 
-class WebMembershipFormView(TemplateView):
+class WebMembershipFormView(View):
     template_name = 'legacy/membership_form.html'
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {})
+
+    def post(self, request, *args, **kwargs):
+        required_fields = ['firstname', 'lastname', 'email',
+                           'password', 'password2', 'bioblurb']
+
+        for field in required_fields:
+            if field not in request.POST:
+                return render(request, self.template_name, {
+                              'error': "There was an error with the form"})
+
+        for field in required_fields:
+            if not request.POST[field]:
+                return render(request, self.template_name, {
+                    'error': "A required (*) field was missing",
+                    'firstname': request.POST['firstname'],
+                    'lastname': request.POST['lastname'],
+                    'email': request.POST['email'],
+                    'bioblurb': request.POST['bioblurb'],
+                })
+
+        if not request.POST['password'] == request.POST['password2']:
+            return render(request, self.template_name, {
+                'error': "Passwords did not match",
+                'firstname': request.POST['firstname'],
+                'lastname': request.POST['lastname'],
+                'email': request.POST['email'],
+                'bioblurb': request.POST['bioblurb'],
+            })
+
+        if not len(request.POST['password']) >= 8:
+            return render(request, self.template_name, {
+                'error': "Password must be at least 8 characters",
+                'firstname': request.POST['firstname'],
+                'lastname': request.POST['lastname'],
+                'email': request.POST['email'],
+                'bioblurb': request.POST['bioblurb'],
+            })
+
+        user = User()
+        user.username = request.POST['email']
+        user.first_name = request.POST['firstname']
+        user.last_name = request.POST['lastname']
+        user.email = request.POST['email']
+        user.is_active = False
+        user.is_staff = False
+        user.is_superuser = False
+        user.set_password(request.POST['password'])
+        user.save()
+
+        # TODO - send email for verification
+
+        return render(request, self.template_name, {
+                      'success': 'Your account has been created,\
+                      it will be reviewed by an administrator shortly.'})
+
+
+class WebRestrictedLoginView(TemplateView):
+    template_name = 'legacy/restricted_login.html'

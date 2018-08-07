@@ -1,7 +1,7 @@
 from django.urls import path
 
 # Legacy views
-from .views import (WebAnnouncementView, WebHomepageView,
+from .views import (WebAnnouncementView, WebHomepageView, WebLogin,
                     WebQuackView, WebMembershipFormView)
 
 urlpatterns = [
@@ -9,5 +9,6 @@ urlpatterns = [
     path('', WebHomepageView.as_view()),
     path('announcement.html', WebAnnouncementView.as_view()),
     path('quack.html', WebQuackView.as_view()),
+    path('Restricted/', WebLogin.as_view()),
     path('membership_form.php', WebMembershipFormView.as_view()),
 ]

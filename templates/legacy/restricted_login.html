@@ -1,0 +1,61 @@
+{% load static %}
+<html>
+<head>
+    <title>Humanist Member Login</title>
+    <link href="{% static 'css/legacy-login.css' %}" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body><center>
+<table border cellpadding=5>
+<td align=center><A HREF="/" border=off><B>Home</B></A></td>
+<td align=center><A HREF="/announcement.html" border=off><B>About</B></A></td> 
+<td align=center> <A
+HREF="/membership_form.php"><B>Subscribe</B></A></td> 
+<td align=center><a href="/search.html"><B>Search</B></a></td>
+<td align=center> <A HREF="/Restricted/"><B>Member Area</B></A></td>
+</table>
+</center>    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <div style="font-family: 'Trebuchet MS', Verdana, Arial, Helvetica, sans-serif;">
+        <center>
+    <b>Note: In order to log in, you must have cookies enabled in your browser.</b><p>
+    <b>Note: If upon login you see a blank page,<br>quit the website completely, clear all cookies in your browser, and then try again.
+    </center>
+    {% if error %}
+    <div id="log">
+           <p class="error">{{ error }}</p>
+    </div>
+    {% endif %}
+    <div id="container" style="width:230px;">
+
+        <form class="form" action="" method="post">
+
+            {% csrf_token %}
+
+            <input type="hidden" name="_submit_check" value="1"/> 
+            <input type="hidden" name="_count" value="0"/> 
+            <input type="hidden" name="_goto" value="."/> 
+        
+            <div style="margin-top:12px; margin-bottom:10px">
+                
+                LOGIN:
+                <input class="input" type="text" name="username" id="username" size="40" maxlength="50" value="" />
+            </div>
+            <div style="margin-bottom:6px">
+                PASSWORD:
+                <input class="input" type="password" name="password" id="password" size="20" maxlength="20" />
+            </div>
+            <input type="submit" value="SUBMIT"  class="submit-btn"  />
+            <br class="clear" />
+            <a href="membership_form.php">Subscribe</a> / <a href="forgot_password.php">Forgot password?</a>
+            
+        </form>
+    
+        
+    </div>
+    
+</body>
+
+</html> 
+

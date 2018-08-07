@@ -51,11 +51,19 @@ HREF="/membership_form.php"><B>Subscribe</B></A></td>
 
 <p><br>
 
+{%if success %}
+<span class="ast">{{success}}</span>
 
+{% else %}
+	{% if error %}
+	<span class="ast">{{error}}</span>
+	{% endif %}
 
-Please fill out this form and submit it.   The fields marked <span class=ast>*</span> are obligatory.
+	Please fill out this form and submit it.   The fields marked <span class=ast>*</span> are obligatory.
+{% endif %}
 <p><br>
-<form action="/membership_form.php" method="POST">
+<form action="" method="post">
+{% csrf_token %}
 <input type="hidden" name="type" value="">
 <table class=f>
 <tr>
@@ -63,7 +71,7 @@ Please fill out this form and submit it.   The fields marked <span class=ast>*</
 <b>First Name: <span class=ast>*</span></b>
 </td>
 <td>
-<input type="text" name="firstname" size="40" maxlength="80" style="font-family: Helvetica, Arial, sans-serif" value="">
+<input type="text" name="firstname" size="40" maxlength="80" style="font-family: Helvetica, Arial, sans-serif" value="{{firstname}}">
 </td>
 </tr>
 <tr>
@@ -71,7 +79,7 @@ Please fill out this form and submit it.   The fields marked <span class=ast>*</
 <b>Last Name: <span class=ast>*</span></b>
 </td>
 <td>
-<input type="text" name="lastname" size="40" maxlength="80" style="font-family: Helvetica, Arial, sans-serif" value="">
+<input type="text" name="lastname" size="40" maxlength="80" style="font-family: Helvetica, Arial, sans-serif" value="{{lastname}}">
 </td>
 </tr>
 <tr>
@@ -87,7 +95,7 @@ Please fill out this form and submit it.   The fields marked <span class=ast>*</
 <b>Email: <span class=ast>*</span></b>
 </td>
 <td>
-<input type="text" name="email" size="40" maxlength="50" style="font-family: Helvetica, Arial, sans-serif" value="">
+<input type="text" name="email" size="40" maxlength="50" style="font-family: Helvetica, Arial, sans-serif" value="{{email}}">
 </td>
 </tr>
 <tr>
@@ -119,7 +127,7 @@ Please fill out this form and submit it.   The fields marked <span class=ast>*</
 <b>Short Bio: <span class=ast>*</span></b>
 </td>
 <td>
-<textarea name="bioblurb" rows=20 cols=80 wrap="hard" style="font-family: Helvetica, Arial, sans-serif"></textarea>
+<textarea name="bioblurb" rows=20 cols=80 wrap="hard" style="font-family: Helvetica, Arial, sans-serif">{{bioblurb}}</textarea>
 <p><br>
 </td>
 </tr>
@@ -134,6 +142,9 @@ Please fill out this form and submit it.   The fields marked <span class=ast>*</
 </tr>
 </table>
 </form>
+
+<p>This site is <a href="//kdl.kcl.ac.uk/how-we-work/kdl-designed-developed-and-maintained/">maintained</a> under a service level agreement by <a href="//kdl.kcl.ac.uk/">King's Digital Lab</a>.
+
 
 </body>
 </html>

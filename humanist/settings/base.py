@@ -60,7 +60,7 @@ EMAIL_HOST = 'smtp.cch.kcl.ac.uk'
 EMAIL_PORT = 25
 EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
-EMAIL_SUBJECT_PREFIX = '[Django {}] '.format(PROJECT_NAME)
+EMAIL_SUBJECT_PREFIX = ''
 EMAIL_USE_TLS = False
 
 # Sender of error messages to ADMINS and MANAGERS
