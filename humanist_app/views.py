@@ -3,8 +3,8 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from .helpers import Email # noqa
-
+from .helpers import AdminEmail, UserEmail  # noqa
+from django.conf import settings
 from .models import Subscriber
 
 '''
@@ -152,7 +152,29 @@ class WebMembershipFormView(View):
         sub.bio = request.POST['bioblurb']
         sub.save()
 
-        # TODO - send email for verification
+        # Send emails
+        email = UserEmail(user)
+        email.subject = "Humanist Registration"
+        email.body = (
+            "Dear {},\n\n"
+            "We have received your Humanist registration request. "
+            "It will shortly be reviewed by an administrator."
+            "Kind Regards,\n Humanist").format(user.first_name)
+        email.send()
+
+        email = AdminEmail()
+        email.subject = "Humanist New Registration"
+        email.body = (
+            "Dear Administrator,\n\n"
+            "{} {} has registered for Humanist. Their bio:\n\n"
+            "{} \n\n"
+            "To approve or deny this request, please visit"
+            "{}/editor/users \n\n"
+            "Kind Regards,\n Humanist").format(user.first_name,
+                                               user.last_name,
+                                               sub.bio,
+                                               settings.base_url)
+        email.send()
 
         return render(request, self.template_name, {
                       'success': 'Your account has been created,\

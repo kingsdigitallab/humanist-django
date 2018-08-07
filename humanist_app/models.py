@@ -1,12 +1,59 @@
 from django.db import models
 from django.contrib.auth.models import User
-
-# Quick model to store bio data
+from datetime import datetime
+import random
+import string
+from .helpers import UserEmail
+from django.conf import settings
 
 
 class Subscriber(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True, null=True)
+    pw_reset_key = models.CharField(null=True, blank=True, max_length=128)
+    pw_reset_date = models.DateTimeField(blank=True, null=True)
+
+    def generate_password_reset_key(self):
+        self.pw_reset_key = ''.join(
+            random.choice(string.ascii_uppercase +
+                          string.ascii_lowercase +
+                          string.digits) for _ in range(128))
+        self.pw_reset_date = datetime.now()
+        self.save()
+
+        email = UserEmail(self.user)
+        email.subject = "Humanist Password Reset"
+        email.body = (
+            "Dear {},\n\n"
+            "We have received a request to reset your Humanist password. "
+            "To reset your password, please click the following link, or "
+            "copy it into your browser:\n\n"
+            "{}/user/reset?email={}&key={} \n\n"
+            "Kind Regards,\n Humanist").format(self.user.first_name,
+                                               settings.base_url,
+                                               self.user.email,
+                                               self.pw_reset_key)
+        email.send()
+
+        return self.pw_reset_key
+
+    def validate_password_reset_key(self, key):
+        if self.pw_reset_key and self.pw_reset_date:
+            timedelta = datetime.now() - self.pw_reset_date
+
+            if timedelta.days == 0:
+                return True
+                if self.pw_reset_key == key:
+                    return True
+                else:
+                    return False
+            else:
+                self.pw_reset_key = None
+                self.pw_reset_date = None
+                self.save()
+                return False
+        else:
+            return False
 
 
 class Edition(models.Model):

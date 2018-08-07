@@ -22,7 +22,7 @@ PROJECT_TITLE = 'Humanist Mailing List'
 # Core Settings
 # https://docs.djangoproject.com/en/dev/ref/settings/#id6
 # -----------------------------------------------------------------------------
-
+BASE_URL = "http://localhost:8080"  # TODO - override in local
 ADMINS = ()
 MANAGERS = ADMINS
 
