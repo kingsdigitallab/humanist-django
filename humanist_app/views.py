@@ -3,9 +3,11 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from .helpers import AdminEmail, UserEmail  # noqa
+from .helpers import AdminEmail, UserEmail
 from django.conf import settings
 from .models import Subscriber
+from .decorators import require_user, require_editor  # noqa
+from django.utils.decorators import method_decorator
 
 '''
 The following views (prefixed "Web") are the legacy
@@ -14,6 +16,14 @@ a) it's not a big job
 b) some of them require integration with the new app
 c) all of them require static files handling.
 '''
+
+
+class UserView(TemplateView):
+    template_name = 'humanist_app/user.html'
+
+    @method_decorator(require_user)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
 
 class UserLogoutView(View):
@@ -66,10 +76,13 @@ class WebLogin(View):
         if user is not None:
             if user.is_active:
                 login(request, user)
-                if user.is_staff:
-                    return redirect('/editor/')
+                if 'next' in request.GET:
+                    return redirect(request.GET['next'])
                 else:
-                    return redirect('/user/')
+                    if user.is_staff:
+                        return redirect('/editor/')
+                    else:
+                        return redirect('/user/')
             else:
                 return render(request, self.template_name, {
                     'error': "Your account is not yet active",
@@ -181,5 +194,5 @@ class WebMembershipFormView(View):
                       it will be reviewed by an administrator shortly.'})
 
 
-class WebRestrictedLoginView(TemplateView):
-    template_name = 'legacy/restricted_login.html'
+class WebRestrictedDeniedView(TemplateView):
+    template_name = 'legacy/restricted_denied.html'

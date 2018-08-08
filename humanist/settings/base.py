@@ -56,7 +56,7 @@ DEBUG = False
 # -----------------------------------------------------------------------------
 
 DEFAULT_FROM_EMAIL = 'noreply@kcl.ac.uk'
-PROJECT_FROM_EMAIL = 'humanist@humanist.org'  # Change this!
+PROJECT_FROM_EMAIL = 'humanist@humanist.kdl.kcl.ac.uk'  # Change this!
 EMAIL_HOST = 'smtp.cch.kcl.ac.uk'
 EMAIL_PORT = 25
 EMAIL_HOST_USER = ''
