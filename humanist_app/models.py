@@ -6,6 +6,8 @@ import string
 from .helpers import UserEmail
 from django.conf import settings
 
+# This class handles any non-standard user operations
+
 
 class Subscriber(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -30,7 +32,7 @@ class Subscriber(models.Model):
             "copy it into your browser:\n\n"
             "{}/user/reset?email={}&key={} \n\n"
             "Kind Regards,\n Humanist").format(self.user.first_name,
-                                               settings.base_url,
+                                               settings.BASE_URL,
                                                self.user.email,
                                                self.pw_reset_key)
         email.send()

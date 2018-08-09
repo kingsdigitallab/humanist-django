@@ -3,7 +3,8 @@ from django.urls import path
 # Legacy views
 from .views import (UserView, UserLogoutView, WebAnnouncementView,
                     WebHomepageView, WebLogin, WebRestrictedDeniedView,
-                    WebQuackView, WebMembershipFormView)
+                    WebQuackView, WebMembershipFormView,
+                    WebForgottenPasswordForm)
 
 urlpatterns = [
     # These are the legacy website, which we have not changed
@@ -14,6 +15,7 @@ urlpatterns = [
     path('Restricted/denied/', WebRestrictedDeniedView.as_view()),
 
     path('membership_form.php', WebMembershipFormView.as_view()),
+    path('forgot_password.php', WebForgottenPasswordForm.as_view()),
 
     # User Pages
     path('user/', UserView.as_view()),

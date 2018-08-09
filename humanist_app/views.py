@@ -186,12 +186,39 @@ class WebMembershipFormView(View):
             "Kind Regards,\n Humanist").format(user.first_name,
                                                user.last_name,
                                                sub.bio,
-                                               settings.base_url)
+                                               settings.BASE_URL)
         email.send()
 
         return render(request, self.template_name, {
                       'success': 'Your account has been created,\
                       it will be reviewed by an administrator shortly.'})
+
+
+class WebForgottenPasswordForm(View):
+    template_name = 'legacy/forgot_password.html'
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {})
+
+    def post(self, request, *args, **kwargs):
+        email = request.POST['email']
+        user = User.objects.filter(email=email)
+
+        error = None
+        success = None
+
+        if user.count():
+            sub = Subscriber.objects.get(user=user[0])
+            sub.generate_password_reset_key()
+            success = 'Please check your email.'
+        else:
+            error = 'Sorry, an error occured.'
+
+        if error:
+            return render(request, self.template_name, {'error': error})
+
+        if success:
+            return render(request, self.template_name, {'success': success})
 
 
 class WebRestrictedDeniedView(TemplateView):

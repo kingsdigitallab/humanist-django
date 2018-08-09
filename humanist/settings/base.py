@@ -55,9 +55,21 @@ DEBUG = False
 # EMAIL SETTINGS
 # -----------------------------------------------------------------------------
 
-DEFAULT_FROM_EMAIL = 'noreply@kcl.ac.uk'
-PROJECT_FROM_EMAIL = 'humanist@humanist.kdl.kcl.ac.uk'  # Change this!
-EMAIL_HOST = 'smtp.cch.kcl.ac.uk'
+# -----------------------------
+# These values are not real - they need to be set
+# in local.py
+# -----------------------------
+# Internal emails sent from the system
+DEFAULT_FROM_EMAIL = ''
+# Emails sent from the project
+PROJECT_FROM_EMAIL = ''
+# Emails sent to the system
+PROJECT_INCOMING_EMAIL = ''
+# Location of list of users who can send email to the system
+EMAIL_ALLOW_LIST = ''
+
+
+EMAIL_HOST = 'localhost'
 EMAIL_PORT = 25
 EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''

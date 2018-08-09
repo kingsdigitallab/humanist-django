@@ -33,21 +33,26 @@ class Command(BaseCommand):
 
             for u in fr:
 
-                if User.objects.filter(email=u[3]).count():
+                user_email = u[3]
+                if '\n' in user_email:
+                    user_email = user_email.split('\n')[0]
+
+                if User.objects.filter(email=user_email).count():
                     print(
-                        ' - Skipping user: {} ({})'.format(u[3], count + skip))
+                        ' - Skipping user: {} ({})'.format(
+                            user_email, count + skip))
                     skip = skip + 1
                 else:
                     count = count + 1
                     print(
                         ' - Importing user: {} ({})'.format(
-                            u[3], count + skip))
+                            user_email, count + skip))
 
                     user = User()
                     user.first_name = u[0]
                     user.last_name = u[2]
-                    user.email = u[3]
-                    user.username = u[3]
+                    user.email = user_email
+                    user.username = user_email
                     user.set_password(u[4])
                     user.is_active = True
                     user.save()
