@@ -5,7 +5,7 @@ from django.conf import settings
 
 def build_user_list(sender, instance, signal, *args, **kwargs):
     if sender is User:
-        user_list = ','.join(User.objects.filter(
+        user_list = '\n'.join(User.objects.filter(
             is_active=True).values_list('email', flat=True))
         try:
             with open(settings.EMAIL_ALLOW_LIST, 'w') as f:
