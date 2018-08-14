@@ -3,7 +3,7 @@ from django.urls import path
 # Legacy views
 from .views import (UserView, UserLogoutView, UserUpdateView,
                     UserUnsubscribeView, UserUnsubscribeConfirmView,
-                    WebResetPasswordView,
+                    UserChangePasswordView, WebResetPasswordView,
                     WebAnnouncementView,
                     WebHomepageView, WebLogin, WebRestrictedDeniedView,
                     WebQuackView, WebMembershipFormView,
@@ -24,10 +24,10 @@ urlpatterns = [
     # User Pages
     path('user/', UserView.as_view()),
     path('user/logout/', UserLogoutView.as_view()),
+    path('user/password/', UserChangePasswordView.as_view()),
     path('user/update/', UserUpdateView.as_view()),
     path('user/unsubscribe/', UserUnsubscribeView.as_view()),
     path('user/unsubscribe/confirm/', UserUnsubscribeConfirmView.as_view()),
-
 
     # Editor Pages
     path('editor/logout/', UserLogoutView.as_view()),

@@ -25,10 +25,15 @@ form.user_form
     input,
     textarea
     {
+        display: block;
         font-family: 'Courier New', 'Courier', mono;
         font-size: 1.2rem;
     }
     
+    label
+    {
+        padding: 0 0 10px 0;
+    }
     .error
     {
         color: #cc0000;

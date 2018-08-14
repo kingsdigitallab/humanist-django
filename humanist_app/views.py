@@ -26,6 +26,51 @@ class UserView(TemplateView):
         return super().dispatch(*args, **kwargs)
 
 
+class UserChangePasswordView(View):
+    template_name = 'humanist_app/user_password.html'
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {})
+
+    def post(self, request, *args, **kwargs):
+        required_fields = ['old_password', 'password', 'password2']
+
+        for field in required_fields:
+            if field not in request.POST:
+                return render(request, self.template_name, {
+                    'error': "There was an error with the form"})
+
+        for field in required_fields:
+            if not request.POST[field]:
+                return render(request, self.template_name, {
+                    'error': "A field was missing",
+                })
+
+        if not request.POST['password'] == request.POST['password2']:
+            return render(request, self.template_name, {
+                'error': "Passwords did not match",
+
+            })
+
+        if not len(request.POST['password']) >= 8:
+            return render(request, self.template_name, {
+                'error': "Password must be at least 8 characters",
+            })
+
+        if request.user.check_password(request.POST['old_password']):
+            u = request.user
+            request.user.set_password(request.POST['password'])
+            request.user.save()
+            login(request, u)
+
+            return render(request, self.template_name, {
+                'success': 'Your password has been changed.'})
+
+        else:
+            return render(request, self.template_name, {
+                'error': 'Invalid password.'})
+
+
 class UserUnsubscribeView(TemplateView):
     template_name = 'humanist_app/user_unsubscribe.html'
 
