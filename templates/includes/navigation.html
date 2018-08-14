@@ -1,2 +1,21 @@
+{% load static %}
+
 {% block main_menu %}
+
+<ul>
+    <li class="left"><a href="/">Humanist Mailing List</a></li>
+    {% if request.user.is_authenticated %}
+    <li><a href="/user/">User Panel</a></li>
+    
+    {% if request.user.is_staff %}
+    <li><a href="/editor/">Editor Interface</a></li>
+    {% endif %}
+    
+    {% if request.user.is_superuser %}
+    <li><a href="/admin/">Admin Interface</a></li>
+    {% endif %}
+    
+    <li><a href="/user/logout">Logout</a></li>
+    {% endif %}
+</ul>   
 {% endblock %}

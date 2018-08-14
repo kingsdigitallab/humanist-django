@@ -1,1 +1,19 @@
 {% extends 'base.html' %}
+
+{% block meta_title %}
+User Panel
+{% endblock %}
+
+{% block title %}
+User Panel
+{% endblock %}
+
+{% block main %}
+<section>
+    <p>Hello <strong>{% if request.user.first_name %}{{ request.user.first_name }}{% endif %}</strong></p>
+
+    <p>You are currently subscribed to Humanist using the email address {{request.user.email}}.</p>
+
+    <p>To update your email address, please <a href="/user/update">click here</a>. Alternatively, if you no longer want to be a part of the Humanist community, you can <a href="/user/unsubscribe">unsubscribe</a>.
+
+{% endblock %}

@@ -14,16 +14,12 @@
   {% endcompress %}
 </head>
 <body>
-  <header>
-    {% include 'includes/header.html' %}
-  </header>
-
   <nav>
     {% include 'includes/navigation.html' %}
   </nav>
 
   <main>
-    {% block title %}{% endblock %}
+    <header><h1>{% block title %}{% endblock %}</h1></header>
     {% block main %}
     {% endblock %}
   </main>

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block meta_title %}
+Unsubscribe
+{% endblock %}
+
+{% block title %}
+Unsubscribe
+{% endblock %}
+
+{% block main %}
+<section>
+    <p>Are you sure?</p>
+
+    <p>We're sorry to see you go, but if you no longer wish to be a member of the Humanist mailing list, you can unsubscribe here. Unsubscribing will delete your user information from our database. It will not delete your emails from any archives we have stored. To re-join, you will need to apply again.</p>
+
+    <p>If you're sure, you click the button below to unsubscribe.</p>
+
+    <form class="user_form" method="post" action="/user/unsubscribe/confirm/">
+        {% csrf_token %}
+        <input type="submit" value="Confirm Unsubscription">
+    </form>
+
+{% endblock %}

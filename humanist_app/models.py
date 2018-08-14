@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from datetime import datetime
+from datetime import datetime, timezone
 import random
 import string
 from .helpers import UserEmail
@@ -20,7 +20,7 @@ class Subscriber(models.Model):
             random.choice(string.ascii_uppercase +
                           string.ascii_lowercase +
                           string.digits) for _ in range(128))
-        self.pw_reset_date = datetime.now()
+        self.pw_reset_date = datetime.now(timezone.utc)
         self.save()
 
         email = UserEmail(self.user)
@@ -41,7 +41,7 @@ class Subscriber(models.Model):
 
     def validate_password_reset_key(self, key):
         if self.pw_reset_key and self.pw_reset_date:
-            timedelta = datetime.now() - self.pw_reset_date
+            timedelta = datetime.now(timezone.utc) - self.pw_reset_date
 
             if timedelta.days == 0:
                 return True

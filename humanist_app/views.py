@@ -26,6 +26,59 @@ class UserView(TemplateView):
         return super().dispatch(*args, **kwargs)
 
 
+class UserUnsubscribeView(TemplateView):
+    template_name = 'humanist_app/user_unsubscribe.html'
+
+
+class UserUnsubscribeConfirmView(View):
+    template_name = 'humanist_app/user_unsubscribe_successful.html'
+
+    def post(self, request, *args, **kwargs):
+        # Keep it simple!
+        # Deleting allows re-subscription without admin interference.
+        request.user.delete()
+        logout(request)
+        return render(request, self.template_name, {})
+
+
+class UserUpdateView(View):
+    template_name = 'humanist_app/user_update.html'
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {})
+
+    def post(self, request, *args, **kwargs):
+        required_fields = ['new_email']
+
+        for field in required_fields:
+            if field not in request.POST:
+                return render(request, self.template_name, {
+                    'error': "There was an error with the form"})
+
+        for field in required_fields:
+            if not request.POST[field]:
+                return render(request, self.template_name, {
+                    'error': "A field was missing",
+                })
+
+        email = request.POST['new_email']
+
+        # Quick sanity check
+        users = User.objects.filter(email__iexact=email)
+
+        if users.count():
+            return render(request, self.template_name, {
+                'error': 'That email already exists.'})
+
+        else:
+            request.user.email = email
+            request.user.username = email
+            request.user.save()
+
+            return render(request, self.template_name, {
+                'success': 'Your email has been changed.'})
+
+
 class UserLogoutView(View):
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
@@ -194,6 +247,68 @@ class WebMembershipFormView(View):
                       it will be reviewed by an administrator shortly.'})
 
 
+class WebResetPasswordView(View):
+    template_name = 'legacy/forgot_password_2.html'
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {})
+
+    def post(self, request, *args, **kwargs):
+        required_fields_post = ['password', 'password2']
+        required_fields_get = ['email', 'key']
+
+        for field in required_fields_post:
+            if field not in request.POST:
+                return render(request, self.template_name, {
+                              'error': "There was an error with the form"})
+
+        for field in required_fields_get:
+            if field not in request.GET:
+                return render(request, self.template_name, {
+                              'error': "Email or key missing"})
+
+        for field in required_fields_post:
+            if not request.POST[field]:
+                return render(request, self.template_name, {
+                    'error': "A required (*) field was missing",
+                })
+
+        for field in required_fields_get:
+            if not request.GET[field]:
+                return render(request, self.template_name, {
+                    'error': "A required (*) field was missing",
+                })
+
+        if not request.POST['password'] == request.POST['password2']:
+            return render(request, self.template_name, {
+                'error': "Passwords did not match",
+
+            })
+
+        if not len(request.POST['password']) >= 8:
+            return render(request, self.template_name, {
+                'error': "Password must be at least 8 characters",
+            })
+
+        user = User.objects.filter(email=request.GET['email'])
+        if user.count():
+            user = user[0]
+            subscriber = Subscriber.objects.get(user=user)
+            if subscriber.validate_password_reset_key(request.GET['key']):
+                user.set_password(request.POST['password'])
+                user.save()
+                return render(request, self.template_name, {
+                    'success': 'Your password has been changed'})
+            else:
+                return render(request, self.template_name, {
+                    'error': "Invalid key",
+                })
+        else:
+            return render(request, self.template_name, {
+                'error': "Invalid email",
+            })
+
+
 class WebForgottenPasswordForm(View):
     template_name = 'legacy/forgot_password.html'
 
@@ -208,7 +323,9 @@ class WebForgottenPasswordForm(View):
         success = None
 
         if user.count():
-            sub = Subscriber.objects.get(user=user[0])
+            user = user[0]
+            sub = Subscriber.objects.filter(user=user)[0]
+            print(sub)
             sub.generate_password_reset_key()
             success = 'Please check your email.'
         else:
