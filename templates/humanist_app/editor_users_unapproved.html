@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block meta_title %}
+Approve Members
+{% endblock %}
+
+{% block title %}
+Approve Members
+{% endblock %}
+
+{% block main %}
+<section>
+
+    {% if error %}
+    <p class="error">{{ error }}</p>
+    {% endif %}
+
+    {% if success %}
+    <p class="success">{{ success }}</p>
+    {% endif %}
+
+    
+
+    {% if users.count %}
+
+        {% for user in users.all %}
+
+            <p>
+                <strong>{{ user.user.first_name}} {{ user.user.last_name}}</strong> - {{ user.user.email }}
+            </p>
+            <p>
+            {% if user.bio %}
+                {{ user.bio }}
+            {% else %}
+                No bio entered during registration.
+
+            {% endif %}
+
+            <form action="" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="id" value="{{user.user.id}}">
+                <input type="submit" name="action" value="Approve">
+                <input type="submit" name="action" value="Reject">
+            </form>
+
+            {% if not forloop.last %}
+            <hr>
+            {% endif %}
+
+        {% endfor %}
+
+    {% else %}
+    <p>No members to approve!</p>
+    {% endif %}
+</section>
+
+
+
+
+{% endblock %}

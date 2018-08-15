@@ -1,7 +1,8 @@
 from django.urls import path
 
 # Legacy views
-from .views import (UserView, UserLogoutView, UserUpdateView,
+from .views import (EditorView, EditorUsersUnapprovedView,
+                    UserView, UserLogoutView, UserUpdateView,
                     UserUnsubscribeView, UserUnsubscribeConfirmView,
                     UserChangePasswordView, WebResetPasswordView,
                     WebAnnouncementView,
@@ -20,6 +21,10 @@ urlpatterns = [
     path('membership_form.php', WebMembershipFormView.as_view()),
     path('forgot_password.php', WebForgottenPasswordForm.as_view()),
     path('user/reset/', WebResetPasswordView.as_view()),
+
+    # Editor pages
+    path('editor/', EditorView.as_view()),
+    path('editor/users/unapproved/', EditorUsersUnapprovedView.as_view()),
 
     # User Pages
     path('user/', UserView.as_view()),

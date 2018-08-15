@@ -5,8 +5,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from .helpers import AdminEmail, UserEmail
 from django.conf import settings
-from .models import Subscriber
-from .decorators import require_user, require_editor  # noqa
+from .models import Subscriber, Edition
+from .decorators import require_user, require_editor
 from django.utils.decorators import method_decorator
 
 '''
@@ -16,6 +16,75 @@ a) it's not a big job
 b) some of them require integration with the new app
 c) all of them require static files handling.
 '''
+
+
+class EditorView(View):
+    template_name = 'humanist_app/editor.html'
+
+    @method_decorator(require_editor)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+
+        user_counts = {}
+        user_counts['active'] = User.objects.filter(is_active=True).count()
+        user_counts['inactive'] = User.objects.filter(is_active=False).count()
+        user_counts['admin'] = User.objects.filter(is_staff=True).count()
+
+        editions = {}
+        editions['drafts'] = Edition.get_drafts()
+        editions['sent'] = Edition.get_sent()
+
+        context = {}
+        context['editions'] = editions
+        context['user_counts'] = user_counts
+        return render(request, self.template_name, context)
+
+
+class EditorUsersUnapprovedView(View):
+    template_name = 'humanist_app/editor_users_unapproved.html'
+
+    @method_decorator(require_editor)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        context = {}
+        unapproved_users = Subscriber.objects.filter(user__is_active=False)
+        context['users'] = unapproved_users
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        required_fields = ['id', 'action']
+        context = {}
+
+        for field in required_fields:
+            if field not in request.POST:
+                context['error'] = "There was an error with the form"
+                return render(request, self.template_name, context)
+
+        for field in required_fields:
+            if not request.POST[field]:
+                context['error'] = "A field was missing"
+                return render(request, self.template_name, context)
+
+        user = User.objects.get(pk=request.POST['id'])
+        action = request.POST['action']
+
+        if action == "Approve":
+            user.is_active = True
+            user.save()
+            context['success'] = "Approved: {}".format(user.email)
+
+        elif action == "Reject":
+            user.delete()
+            context['success'] = "Rejected: {}".format(user.email)
+
+        unapproved_users = Subscriber.objects.filter(user__is_active=False)
+        context['users'] = unapproved_users
+
+        return render(request, self.template_name, context)
 
 
 class UserView(TemplateView):
@@ -28,6 +97,10 @@ class UserView(TemplateView):
 
 class UserChangePasswordView(View):
     template_name = 'humanist_app/user_password.html'
+
+    @method_decorator(require_user)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name, {})
@@ -74,9 +147,17 @@ class UserChangePasswordView(View):
 class UserUnsubscribeView(TemplateView):
     template_name = 'humanist_app/user_unsubscribe.html'
 
+    @method_decorator(require_user)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
 
 class UserUnsubscribeConfirmView(View):
     template_name = 'humanist_app/user_unsubscribe_successful.html'
+
+    @method_decorator(require_user)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         # Keep it simple!
@@ -88,6 +169,10 @@ class UserUnsubscribeConfirmView(View):
 
 class UserUpdateView(View):
     template_name = 'humanist_app/user_update.html'
+
+    @method_decorator(require_user)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name, {})

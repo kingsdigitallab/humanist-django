@@ -1,4 +1,9 @@
 /** Your custom scss here **/
+
+/** Colors */
+$primary: #819e6c;
+
+
 html,
 body
 {
@@ -11,13 +16,106 @@ body
 a
 {
     text-decoration: none;
-    color: #052992;
+    color: $primary;
 
 
     &:hover
     {
         border-bottom: 1px dotted;
     }
+}
+
+.badge
+{
+    display: inline-block;
+    background: $primary;
+    color: #ffffff;
+    padding: 2px 5px;
+
+    border-radius: 5px;
+}
+.editor-mailbox
+{
+    table
+    {
+        border-spacing: 10px;
+        border-collapse: separate;
+        tr
+        {   
+            
+            td
+            {
+                padding: 10px 0 ;
+                vertical-align: top;
+            }
+        }
+    }
+
+    .content
+    {
+        .subject
+        {
+            display: block;
+            padding: 0 0 20px 0;
+            font-weight: bold;
+        }
+
+        .body
+        {
+            outline: 2px solid #eeeeee;
+            padding: 10px;
+            max-height: 200px;
+            overflow: scroll;
+
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+        }
+    }
+}
+
+.editor-overview
+{
+    overflow: hidden;
+
+    .editions
+    {
+        float: left;
+        width: 70%;
+    }
+
+    .users
+    {
+        float: left;
+        width: 25%;
+
+        dl
+        {
+            dt
+            {
+                font-weight: bold;
+                display: inline;
+            }
+
+            dd
+            {
+                display: inline;
+                margin: 0;
+
+                &:after { 
+                    content: '\A';
+                    white-space:pre;
+                }
+            }
+        }
+    }
+}
+
+ .error
+{
+    color: #cc0000;
 }
 
 form.user_form
@@ -34,15 +132,6 @@ form.user_form
     {
         padding: 0 0 10px 0;
     }
-    .error
-    {
-        color: #cc0000;
-    }
-
-    .success
-    {
-        color: #00aa00;
-    }
 }
 
 footer
@@ -58,7 +147,7 @@ footer
 
         a
         {
-            color: #052992;
+            color: $primary;
         }
     }
 }
@@ -78,7 +167,7 @@ main
 
 nav
 {
-    background: #052992;
+    background: $primary;
     height: 50px;
 
     ul
@@ -116,4 +205,10 @@ nav
 section
 {
     margin: 50px 0 0 0;
+}
+
+
+.success
+{
+    color: #00aa00;
 }
