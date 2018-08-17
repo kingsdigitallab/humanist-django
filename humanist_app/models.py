@@ -90,7 +90,7 @@ class IncomingEmail(models.Model):
     used = models.BooleanField(null=False, default=False)
     deleted = models.BooleanField(null=False, default=False)
     processed = models.BooleanField(null=False, default=False)
-    log = models.CharField(blank=True, null=True, max_length=4096)
+    log = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ['-date']
