@@ -34,19 +34,71 @@ a
 
     border-radius: 5px;
 }
-.editor-mailbox
+
+.editor-formlist
 {
+
+    textarea[name='body']
+    {
+        height: 100px;
+        width: 100%;
+    }
+
+    input.send
+    {
+        background: #819e6c;
+        color: #ffffff;
+
+        &:hover
+        {
+            background: #708d5b;
+        }
+    }
+
     table
     {
-        border-spacing: 10px;
+        border-spacing: 0px;
         border-collapse: separate;
+        width: 100%;
+        white-space: nowrap;
         tr
-        {   
-            
+        { 
+
+            &:nth-child(2n+1):not(:first-child)
+            {
+                background: #fafafa;
+
+                &:hover
+                {
+                    background: #eeeeee;
+                }
+            }
+
+            &:hover
+            {
+                background: #eeeeee;
+            }
+
+            th
+            {
+                border-bottom: 1px solid #ccc;
+                padding: 10px 10px;
+
+                &:last-child {
+                    text-align: left;
+                    width: 100%;
+                }
+            }
+
             td
             {
-                padding: 10px 0 ;
+                padding: 10px 10px;
                 vertical-align: top;
+
+                &:last-child {
+                    text-align: left;
+                    width: 100%;
+                }
             }
         }
     }
@@ -62,7 +114,8 @@ a
 
         .body
         {
-            outline: 2px solid #eeeeee;
+            outline: 2px solid #dddddd;
+            margin: 0 0 10px 0;
             padding: 10px;
             max-height: 200px;
             overflow: scroll;

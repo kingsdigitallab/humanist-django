@@ -12,18 +12,25 @@ Editor Interface
 <section class="editor-overview">
 
     <div class="editions">
-        <h2>Editions</h2>
+        <h2>Recent Editions</h2>
+
+        {% for edition in editions.drafts %}
         <p>
             <span class="badge">draft</span>
 
-            <a href="#">Subject Line Goes Here</a>
+            <a href="/editor/editions/{{edition.id}}">{% if edition.subject %}{{ edition.subject }}{% else %}Untitled Edition{% endif %}</a>
         </p>
 
+        {% endfor %}
+        {% for edition in editions.sent %}
         <p>
-            <span class="badge">01/02/2003</span>
+            <span class="badge">{{ edition.date_sent }}</span>
 
-            <a href="#">This one was sent</a>
+             <a href="/editor/editions/{{edition.id}}">{% if edition.subject %}{{ edition.subject }}{% else %}Untitled Edition{% endif %}</a>
         </p>
+        {% endfor %}
+
+        <p><a href="/editor/editions">View More</a>
     </div>
 
     <div class="users">
@@ -44,121 +51,44 @@ Editor Interface
 
 
 
-<section class="editor-mailbox">
+<section class="editor-formlist">
     <h2>Inbox</h2>
+    <p>{{ emails.inbox.count}} New, <a href="/editor/used">{{ emails.used.count }} Used, <a href="/editor/trash">{{ emails.deleted.count }} Deleted</a></p>
 
-    <table>
-        <tr>
-            <th>Date</th>
-            <th>From</th>
-            <th>Content</th>
-            <th>Actions</th>
-        </tr>
+    {% if emails.inbox.count %}
+    <form action="" method="post">
+        {% csrf_token %}
+        <table>
+            <tr>
+                <th></th>
+                <th>Date</th>
+                <th>From</th>
+                <th>Content</th>
+            </tr>
 
-        <!-- emails -->
-        <tr>
-            <td class="date">01/02/1990</td>
-            <td class="from">hello@somerandomlylongemail.com</td>
-            <td class="content">
-                <span class="subject">This is the email subject, it can be rather long.</span>
+            <!-- emails -->
+            {% for email in emails.inbox %}
+            <tr>
+                <td><input type="checkbox" name="email_id" value="{{email.id}}"></td>
+                <td class="date">{{ email.date }}</td>
+                <td class="from">{{ email.sender }}</td>
+                <td class="content">
+                    <span class="subject">{{ email.subject }}</span>
 
-                <div class="body">
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam id lobortis est. Mauris lobortis, urna vel suscipit consequat, elit ante fermentum mauris, quis porta metus lectus id diam. Vivamus mollis, sapien ac ullamcorper eleifend, tellus quam tempus lacus, a interdum augue turpis eleifend nisi. Duis congue quam a bibendum eleifend. Etiam ac purus purus. Etiam eleifend arcu elit, lacinia interdum libero aliquet non. Duis non pulvinar massa, eget mollis odio. Cras vulputate, orci eget condimentum elementum, ligula nibh tempor nulla, vitae faucibus ante sapien eget ante. Sed rhoncus quam ac pulvinar aliquet. Vivamus euismod quis nisi at sodales. Nullam dignissim lacus at lectus hendrerit, in eleifend felis vestibulum. Suspendisse id enim sit amet metus suscipit tempor eget vitae nisl. Integer vitae dui a arcu blandit molestie. Integer vestibulum magna dui, sit amet scelerisque erat faucibus ac.
+                    <div class="body">{{ email.body }}</div>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
 
-Mauris et tortor venenatis, placerat massa eu, egestas neque. Maecenas eleifend tellus et laoreet ornare. Aenean hendrerit dolor pretium lacinia viverra. Nulla vitae purus faucibus, feugiat est quis, bibendum turpis. Donec non lacus vel est semper scelerisque ut aliquet ligula. Cras tellus turpis, sodales id libero quis, efficitur pharetra urna. Nullam sed nibh eu nunc elementum mattis. Morbi ipsum sapien, consequat non mattis sit amet, rhoncus at arcu. Sed et eros bibendum, ullamcorper dui nec, pharetra neque. Vestibulum ut turpis id nulla tincidunt volutpat. Duis eget ex sed nulla vehicula sollicitudin. Mauris nec feugiat nisl. Pellentesque feugiat orci a lectus ullamcorper, et sollicitudin sapien euismod. Vivamus pellentesque sapien odio, ac commodo dolor placerat vel. Ut non finibus neque.
-                </div>
-            </td>
-
-            <td>
-                <form action="" method="post">
-                    <input type="hidden" name="action" value="delete">
-                    <input type="hidden" name="id" value="id">
-                    <input type="submit" value="Delete">
-                </form>
-            </td>
-        </tr><tr>
-            <td class="date">01/02/1990</td>
-            <td class="from">hello@somerandomlylongemail.com</td>
-            <td class="content">
-                <span class="subject">This is the email subject, it can be rather long.</span>
-
-                <div class="body">
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam id lobortis est. Mauris lobortis, urna vel suscipit consequat, elit ante fermentum mauris, quis porta metus lectus id diam. Vivamus mollis, sapien ac ullamcorper eleifend, tellus quam tempus lacus, a interdum augue turpis eleifend nisi. Duis congue quam a bibendum eleifend. Etiam ac purus purus. Etiam eleifend arcu elit, lacinia interdum libero aliquet non. Duis non pulvinar massa, eget mollis odio. Cras vulputate, orci eget condimentum elementum, ligula nibh tempor nulla, vitae faucibus ante sapien eget ante. Sed rhoncus quam ac pulvinar aliquet. Vivamus euismod quis nisi at sodales. Nullam dignissim lacus at lectus hendrerit, in eleifend felis vestibulum. Suspendisse id enim sit amet metus suscipit tempor eget vitae nisl. Integer vitae dui a arcu blandit molestie. Integer vestibulum magna dui, sit amet scelerisque erat faucibus ac.
-
-Mauris et tortor venenatis, placerat massa eu, egestas neque. Maecenas eleifend tellus et laoreet ornare. Aenean hendrerit dolor pretium lacinia viverra. Nulla vitae purus faucibus, feugiat est quis, bibendum turpis. Donec non lacus vel est semper scelerisque ut aliquet ligula. Cras tellus turpis, sodales id libero quis, efficitur pharetra urna. Nullam sed nibh eu nunc elementum mattis. Morbi ipsum sapien, consequat non mattis sit amet, rhoncus at arcu. Sed et eros bibendum, ullamcorper dui nec, pharetra neque. Vestibulum ut turpis id nulla tincidunt volutpat. Duis eget ex sed nulla vehicula sollicitudin. Mauris nec feugiat nisl. Pellentesque feugiat orci a lectus ullamcorper, et sollicitudin sapien euismod. Vivamus pellentesque sapien odio, ac commodo dolor placerat vel. Ut non finibus neque.
-                </div>
-            </td>
-
-            <td>
-                <form action="" method="post">
-                    <input type="hidden" name="action" value="delete">
-                    <input type="hidden" name="id" value="id">
-                    <input type="submit" value="Delete">
-                </form>
-            </td>
-        </tr><tr>
-            <td class="date">01/02/1990</td>
-            <td class="from">hello@somerandomlylongemail.com</td>
-            <td class="content">
-                <span class="subject">This is the email subject, it can be rather long.</span>
-
-                <div class="body">
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam id lobortis est. Mauris lobortis, urna vel suscipit consequat, elit ante fermentum mauris, quis porta metus lectus id diam. Vivamus mollis, sapien ac ullamcorper eleifend, tellus quam tempus lacus, a interdum augue turpis eleifend nisi. Duis congue quam a bibendum eleifend. Etiam ac purus purus. Etiam eleifend arcu elit, lacinia interdum libero aliquet non. Duis non pulvinar massa, eget mollis odio. Cras vulputate, orci eget condimentum elementum, ligula nibh tempor nulla, vitae faucibus ante sapien eget ante. Sed rhoncus quam ac pulvinar aliquet. Vivamus euismod quis nisi at sodales. Nullam dignissim lacus at lectus hendrerit, in eleifend felis vestibulum. Suspendisse id enim sit amet metus suscipit tempor eget vitae nisl. Integer vitae dui a arcu blandit molestie. Integer vestibulum magna dui, sit amet scelerisque erat faucibus ac.
-
-Mauris et tortor venenatis, placerat massa eu, egestas neque. Maecenas eleifend tellus et laoreet ornare. Aenean hendrerit dolor pretium lacinia viverra. Nulla vitae purus faucibus, feugiat est quis, bibendum turpis. Donec non lacus vel est semper scelerisque ut aliquet ligula. Cras tellus turpis, sodales id libero quis, efficitur pharetra urna. Nullam sed nibh eu nunc elementum mattis. Morbi ipsum sapien, consequat non mattis sit amet, rhoncus at arcu. Sed et eros bibendum, ullamcorper dui nec, pharetra neque. Vestibulum ut turpis id nulla tincidunt volutpat. Duis eget ex sed nulla vehicula sollicitudin. Mauris nec feugiat nisl. Pellentesque feugiat orci a lectus ullamcorper, et sollicitudin sapien euismod. Vivamus pellentesque sapien odio, ac commodo dolor placerat vel. Ut non finibus neque.
-                </div>
-            </td>
-
-            <td>
-                <form action="" method="post">
-                    <input type="hidden" name="action" value="delete">
-                    <input type="hidden" name="id" value="id">
-                    <input type="submit" value="Delete">
-                </form>
-            </td>
-        </tr><tr>
-            <td class="date">01/02/1990</td>
-            <td class="from">hello@somerandomlylongemail.com</td>
-            <td class="content">
-                <span class="subject">This is the email subject, it can be rather long.</span>
-
-                <div class="body">
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam id lobortis est. Mauris lobortis, urna vel suscipit consequat, elit ante fermentum mauris, quis porta metus lectus id diam. Vivamus mollis, sapien ac ullamcorper eleifend, tellus quam tempus lacus, a interdum augue turpis eleifend nisi. Duis congue quam a bibendum eleifend. Etiam ac purus purus. Etiam eleifend arcu elit, lacinia interdum libero aliquet non. Duis non pulvinar massa, eget mollis odio. Cras vulputate, orci eget condimentum elementum, ligula nibh tempor nulla, vitae faucibus ante sapien eget ante. Sed rhoncus quam ac pulvinar aliquet. Vivamus euismod quis nisi at sodales. Nullam dignissim lacus at lectus hendrerit, in eleifend felis vestibulum. Suspendisse id enim sit amet metus suscipit tempor eget vitae nisl. Integer vitae dui a arcu blandit molestie. Integer vestibulum magna dui, sit amet scelerisque erat faucibus ac.
-
-Mauris et tortor venenatis, placerat massa eu, egestas neque. Maecenas eleifend tellus et laoreet ornare. Aenean hendrerit dolor pretium lacinia viverra. Nulla vitae purus faucibus, feugiat est quis, bibendum turpis. Donec non lacus vel est semper scelerisque ut aliquet ligula. Cras tellus turpis, sodales id libero quis, efficitur pharetra urna. Nullam sed nibh eu nunc elementum mattis. Morbi ipsum sapien, consequat non mattis sit amet, rhoncus at arcu. Sed et eros bibendum, ullamcorper dui nec, pharetra neque. Vestibulum ut turpis id nulla tincidunt volutpat. Duis eget ex sed nulla vehicula sollicitudin. Mauris nec feugiat nisl. Pellentesque feugiat orci a lectus ullamcorper, et sollicitudin sapien euismod. Vivamus pellentesque sapien odio, ac commodo dolor placerat vel. Ut non finibus neque.
-                </div>
-            </td>
-
-            <td>
-                <form action="" method="post">
-                    <input type="hidden" name="action" value="delete">
-                    <input type="hidden" name="id" value="id">
-                    <input type="submit" value="Delete">
-                </form>
-            </td>
-        </tr><tr>
-            <td class="date">01/02/1990</td>
-            <td class="from">hello@somerandomlylongemail.com</td>
-            <td class="content">
-                <span class="subject">This is the email subject, it can be rather long.</span>
-
-                <div class="body">
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam id lobortis est. Mauris lobortis, urna vel suscipit consequat, elit ante fermentum mauris, quis porta metus lectus id diam. Vivamus mollis, sapien ac ullamcorper eleifend, tellus quam tempus lacus, a interdum augue turpis eleifend nisi. Duis congue quam a bibendum eleifend. Etiam ac purus purus. Etiam eleifend arcu elit, lacinia interdum libero aliquet non. Duis non pulvinar massa, eget mollis odio. Cras vulputate, orci eget condimentum elementum, ligula nibh tempor nulla, vitae faucibus ante sapien eget ante. Sed rhoncus quam ac pulvinar aliquet. Vivamus euismod quis nisi at sodales. Nullam dignissim lacus at lectus hendrerit, in eleifend felis vestibulum. Suspendisse id enim sit amet metus suscipit tempor eget vitae nisl. Integer vitae dui a arcu blandit molestie. Integer vestibulum magna dui, sit amet scelerisque erat faucibus ac.
-
-Mauris et tortor venenatis, placerat massa eu, egestas neque. Maecenas eleifend tellus et laoreet ornare. Aenean hendrerit dolor pretium lacinia viverra. Nulla vitae purus faucibus, feugiat est quis, bibendum turpis. Donec non lacus vel est semper scelerisque ut aliquet ligula. Cras tellus turpis, sodales id libero quis, efficitur pharetra urna. Nullam sed nibh eu nunc elementum mattis. Morbi ipsum sapien, consequat non mattis sit amet, rhoncus at arcu. Sed et eros bibendum, ullamcorper dui nec, pharetra neque. Vestibulum ut turpis id nulla tincidunt volutpat. Duis eget ex sed nulla vehicula sollicitudin. Mauris nec feugiat nisl. Pellentesque feugiat orci a lectus ullamcorper, et sollicitudin sapien euismod. Vivamus pellentesque sapien odio, ac commodo dolor placerat vel. Ut non finibus neque.
-                </div>
-            </td>
-
-            <td>
-                <form action="" method="post">
-                    <input type="hidden" name="action" value="delete">
-                    <input type="hidden" name="id" value="id">
-                    <input type="submit" value="Delete">
-                </form>
-            </td>
-        </tr>
-
-    </table>
+        <div class="controls">
+            <input type="submit" name="action" value="Create Edition">
+            <input type="submit" name="action" value="Mark as Used"> 
+            <input type="submit" name="action" value="Delete"> 
+        </div>
+    {% else %}
+    <p>There are no new emails</p>
+    {% endif %}
 
 </section>
 

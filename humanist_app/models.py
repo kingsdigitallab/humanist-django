@@ -5,7 +5,7 @@ import random
 import string
 from .helpers import UserEmail
 from django.conf import settings
-
+from django.core.exceptions import ObjectDoesNotExist
 # This class handles any non-standard user operations
 
 
@@ -97,10 +97,18 @@ class IncomingEmail(models.Model):
 
     @classmethod
     def get_available(cls):
+        # users = list(
+        #    User.objects.filter(is_active=True).values_list(
+        #    'email', flat=True))
+        # return cls.objects.annotate(sender_lower=Lower('sender')).filter(
+        #    deleted=False).filter(
+        #    used=False).filter(
+        #    processed=True).filter(
+        #    sender_lower__in=users)
         return cls.objects.filter(
             deleted=False).filter(
-            used=False).filter(
-            processed=True)
+            processed=True).filter(
+            used=False)
 
     @classmethod
     def get_deleted(cls):
@@ -108,15 +116,21 @@ class IncomingEmail(models.Model):
 
     @classmethod
     def get_unused(cls):
-        return cls.objects.filter(used=False)
+        return cls.objects.filterc(used=False)
 
     @classmethod
     def get_used(cls):
-        return cls.objects.filter(used=False)
+        return cls.objects.filter(
+            used=True).filter(
+            processed=True).filter(
+            deleted=False)
 
     @property
     def user(self):
-        return User.objects.get(email=self.flsender)
+        try:
+            return User.objects.get(email=self.sender)
+        except ObjectDoesNotExist:
+            return 'Unknown Sender'
 
 
 class EditedEmail(models.Model):
@@ -132,11 +146,6 @@ class EditedEmail(models.Model):
 
     class Meta:
         ordering = ['-date_created']
-
-    def __init__(self):
-        self.body = self.incoming.body
-        self.subject = self.incoming.subject
-        self.sender = self.incoming.sender
 
     @property
     def user(self):

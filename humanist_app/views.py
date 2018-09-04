@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from .helpers import AdminEmail, UserEmail
 from django.conf import settings
-from .models import Subscriber, Edition
+from .models import (Edition, IncomingEmail, EditedEmail, Subscriber)
 from .decorators import require_user, require_editor
 from django.utils.decorators import method_decorator
 
@@ -36,10 +36,224 @@ class EditorView(View):
         editions['drafts'] = Edition.get_drafts()
         editions['sent'] = Edition.get_sent()
 
+        emails = {}
+        emails['inbox'] = IncomingEmail.get_available()
+        emails['used'] = IncomingEmail.get_used()
+        emails['deleted'] = IncomingEmail.get_deleted()
+
         context = {}
         context['editions'] = editions
+        context['emails'] = emails
         context['user_counts'] = user_counts
         return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        if 'action' in request.POST:
+            if request.POST['action'] == 'Delete':
+                # Delete selected emails
+                if 'email_id' in request.POST:
+                    email_ids = request.POST.getlist('email_id')
+                    for eid in email_ids:
+                        email = IncomingEmail.objects.get(id=eid)
+                        email.deleted = True
+                        email.save()
+
+            elif request.POST['action'] == 'Mark as Used':
+                # Delete selected emails
+                if 'email_id' in request.POST:
+                    email_ids = request.POST.getlist('email_id')
+                    for eid in email_ids:
+                        email = IncomingEmail.objects.get(id=eid)
+                        email.used = True
+                        email.save()
+
+            elif request.POST['action'] == 'Create Edition':
+                # Create a new edition
+                if 'email_id' in request.POST:
+                    email_ids = request.POST.getlist('email_id')
+                    if len(email_ids) > 0:
+
+                        edition = Edition()
+                        edition.save()
+
+                        for eid in email_ids:
+                            email = IncomingEmail.objects.get(id=eid)
+
+                            edited_email = EditedEmail()
+                            edited_email.edition = edition
+                            edited_email.body = email.body
+                            edited_email.subject = email.subject
+                            edited_email.sender = email.sender
+                            edited_email.incoming = email
+                            edited_email.save()
+
+                            email.used = True
+                            email.save()
+                pass
+
+            else:
+                # Unknown method
+                pass
+
+        return self.get(request, args, kwargs)
+
+
+class EditorEditionsView(View):
+    template_name = 'humanist_app/editor_editions.html'
+
+    @method_decorator(require_editor)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+
+        context = {}
+
+        editions = {}
+        editions['drafts'] = Edition.get_drafts()
+        editions['sent'] = Edition.get_sent()
+
+        context['editions'] = editions
+
+        return render(request, self.template_name, context)
+
+
+class EditorEditionsSingleView(View):
+    template_name = 'humanist_app/editor_editions_single.html'
+
+    @method_decorator(require_editor)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+
+        context = {}
+        edition = Edition.objects.get(id=kwargs['edition_id'])
+        context['edition'] = edition
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        edition = Edition.objects.get(id=kwargs['edition_id'])
+        if 'action' in request.POST:
+            if request.POST['action'] == 'Save':
+                # Save and do nothing
+                edition.subject = request.POST['subject']
+                edition.save()
+                for email in edition.editedemail_set.all():
+                    email.sender = request.POST['sender_{}'.format(email.id)]
+                    email.subject = request.POST['subject_{}'.format(email.id)]
+                    email.body = request.POST['body_{}'.format(email.id)]
+                    email.save()
+
+            elif request.POST['action'] == 'Delete Selected':
+                # Delete selected emails from this edition
+                if 'email_id' in request.POST:
+                    email_ids = request.POST.getlist('email_id')
+                    for eid in email_ids:
+                        email = EditedEmail.objects.get(id=eid)
+                        email.delete()
+
+            elif request.POST['action'] == 'Delete Edition':
+                # Delete selected emails from this edition
+                edition.delete()
+                return redirect('/editor/editions/')
+            else:
+                # Unknown method
+                pass
+        return self.get(request, *args, **kwargs)
+
+
+class EditorTrashView(View):
+    template_name = 'humanist_app/editor_trash.html'
+
+    @method_decorator(require_editor)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+
+        emails = {}
+        emails['inbox'] = IncomingEmail.get_available()
+        emails['used'] = IncomingEmail.get_used()
+        emails['deleted'] = IncomingEmail.get_deleted()
+
+        context = {}
+        context['emails'] = emails
+
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        if 'action' in request.POST:
+            if request.POST['action'] == 'Restore':
+                # Restore selected emails
+                if 'email_id' in request.POST:
+                    email_ids = request.POST.getlist('email_id')
+                    for eid in email_ids:
+                        email = IncomingEmail.objects.get(id=eid)
+                        email.deleted = False
+                        email.save()
+
+            elif request.POST['action'] == 'Empty Trash':
+                # Empty the trash
+                emails = IncomingEmail.get_deleted()
+                for email in emails:
+                    email.delete()
+
+            else:
+                # Unknown method
+                pass
+        return self.get(request, args, kwargs)
+
+
+class EditorUsedView(View):
+    template_name = 'humanist_app/editor_used.html'
+
+    @method_decorator(require_editor)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+
+        emails = {}
+        emails['inbox'] = IncomingEmail.get_available()
+        emails['used'] = IncomingEmail.get_used()
+        emails['deleted'] = IncomingEmail.get_deleted()
+
+        context = {}
+        context['emails'] = emails
+
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        if 'action' in request.POST:
+            if request.POST['action'] == 'Mark as Not Used':
+                # Restore selected emails
+                if 'email_id' in request.POST:
+                    email_ids = request.POST.getlist('email_id')
+                    for eid in email_ids:
+                        email = IncomingEmail.objects.get(id=eid)
+                        email.used = False
+                        email.save()
+
+            elif request.POST['action'] == 'Delete':
+                # Restore selected emails
+                if 'email_id' in request.POST:
+                    email_ids = request.POST.getlist('email_id')
+                    for eid in email_ids:
+                        email = IncomingEmail.objects.get(id=eid)
+                        email.deleted = True
+                        email.save()
+
+            elif request.POST['action'] == 'Delete All':
+                # Restore selected emails
+                for email in IncomingEmail.get_used():
+                    email.deleted = True
+                    email.save()
+            else:
+                # Unknown method
+                pass
+
+        return self.get(request, args, kwargs)
 
 
 class EditorUsersUnapprovedView(View):

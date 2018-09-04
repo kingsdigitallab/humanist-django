@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block meta_title %}
+Editor Interface
+{% endblock %}
+
+{% block title %}
+Editor Interface
+{% endblock %}
+
+{% block main %}
+
+<section class="editor-formlist">
+    <h2>Trash</h2>
+    <p><a href="/editor">{{ emails.inbox.count}} New</a>, {{ emails.used.count }} Used, <a href="/editor/trash">{{ emails.deleted.count }} deleted</a></p>
+
+    <p>The following emails have been marked as used.</p>
+
+    {% if emails.used.count %}
+    <form action="" method="post">
+        {% csrf_token %}
+        <table>
+            <tr>
+                <th></th>
+                <th>Date</th>
+                <th>From</th>
+                <th>Content</th>
+            </tr>
+
+            <!-- emails -->
+            {% for email in emails.used %}
+            <tr>
+                <td><input type="checkbox" name="email_id" value="{{email.id}}"></td>
+                <td class="date">{{ email.date }}</td>
+                <td class="from">{{ email.sender }}</td>
+                <td class="content">
+                    <span class="subject">{{ email.subject }}</span>
+
+                    <div class="body">{{ email.body }}</div>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <div class="controls">
+            <input type="submit" name="action" value="Mark as Not Used"> 
+            <input type="submit" name="action" value="Delete">
+            <input type="submit" name="action" value="Delete All">
+        </div>
+    {% else %}
+    <p>There are no used emails.</p>
+    {% endif %}
+
+</section>
+
+
+
+{% endblock %}

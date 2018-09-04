@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block meta_title %}
+Editions
+{% endblock %}
+
+{% block title %}
+Editions
+{% endblock %}
+
+{% block main %}
+
+<section class="editor-formlist">
+{% if editions.drafts or editions.sent %}
+
+    {% if editions.drafts %}
+    <h2>Drafts</h2>
+
+
+    <table>
+        <tr>
+            <th>Created</th>
+            <th>Modified</th>
+            <th>Subject</th>
+        </tr>
+
+        <!-- emails -->
+        {% for edition in editions.drafts %}
+        <tr>
+            <td class="date">{{ edition.date_created }}</td>
+            <td class="from">{{ edition.date_modified }}</td>
+            <td class="content">
+                <span class="subject"><a href="/editor/editions/{{edition.id}}">{% if edition.subject %}{{ edition.subject }}{% else %}Unitled Edition{% endif %}</a></span>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+
+    {% if editions.sent %}
+    <h2>Sent</h2>
+
+
+    <table>
+        <tr>
+            <th>Created</th>
+            <th>Sent</th>
+            <th>Subject</th>
+        </tr>
+
+        <!-- emails -->
+        {% for edition in editions.sent %}
+        <tr>
+            <td class="date">{{ edition.date_created }}</td>
+            <td class="from">{{ edition.date_sent }}</td>
+            <td class="content">
+                <span class="subject"><a href="/editor/editions/{{edition.id}}">{% if edition.subject %}{{ edition.subject }}{% else %}Unitled Edition{% endif %}</a></span>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+
+{% else %}
+<p>There are no editions.</p>
+{% endif %}
+
+</section>
+
+
+
+{% endblock %}

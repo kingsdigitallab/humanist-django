@@ -35,7 +35,7 @@ class Command(BaseCommand):
 
                 user_email = u[3]
                 if '\n' in user_email:
-                    user_email = user_email.split('\n')[0]
+                    user_email = user_email.split('\n')[0].lower()
 
                 if User.objects.filter(email=user_email).count():
                     print(

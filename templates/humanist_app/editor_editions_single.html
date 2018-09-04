@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block meta_title %}
+View/Edit Edition
+{% endblock %}
+
+{% block title %}
+View/Edit Edition
+{% endblock %}
+
+{% block main %}
+
+{% if edition.sent %}
+
+<section>
+    <h2>{% if edition.subject %}{{ edition.subject }}{% else %}Untitled Edition{% endif %}</h2>
+    <p>This edition was sent {{ edition.date_sent }}</p>
+
+    <pre>
+    {% for email in edition.editedemail_set.all %}
+    {{email.subject}} from {{ email.sender }}
+
+    {{ email.body }}
+    {% if not forloop.last %}
+
+    -----
+
+    {% endif %}
+    {% endfor %}
+    </pre>
+
+</section>
+
+{% else %}
+
+<section class="editor-formlist">
+    <form action="" method="post">
+        <p>Edition Subject: <input name="subject" value="{{ edition.subject }}"></p>
+        {% csrf_token %}
+        <table>
+            <tr>
+                <th></th>
+                <th>From</th>
+                <th>Subject</th>
+                <th>Body</th>
+            </tr>
+
+            <!-- emails -->
+            {% for email in edition.editedemail_set.all %}
+            <tr>
+                <td><input type="checkbox" name="email_id" value="{{email.id}}"></td>
+                <td ><input name="sender_{{email.id}}" value="{{ email.sender }}"></td>
+                <td><input name="subject_{{email.id}}" value="{{ email.subject }}"></td>
+                <td>
+                    <textarea name="body_{{email.id}}">{{ email.body }}</textarea>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <div class="controls">
+            <input type="submit" name="action" value="Delete Selected">
+            <input type="submit" name="action" value="Delete Edition">
+            <input type="submit" name="action" value="Save">
+            <input type="submit" name="action" class="send" value="Preview and Send">
+
+        </div>
+    
+
+</section>
+
+{% endif %}
+
+{% endblock %}
