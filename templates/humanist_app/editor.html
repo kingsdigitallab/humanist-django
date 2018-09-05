@@ -85,6 +85,15 @@ Editor Interface
             <input type="submit" name="action" value="Create Edition">
             <input type="submit" name="action" value="Mark as Used"> 
             <input type="submit" name="action" value="Delete"> 
+            {% if editions.drafts %}
+            <p>Add selected emails to an existing draft:</p>
+            <select name="edition_id">
+                {% for ed in editions.drafts %}
+                <option value="{{ed.id}}">{% if ed.subject %}{{ ed.subject }}{% else %}Untitled Edition{% endif %}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" name="action" value="Add"> 
+            {% endif %}
         </div>
     {% else %}
     <p>There are no new emails</p>

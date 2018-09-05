@@ -34,7 +34,7 @@ class EditorView(View):
 
         editions = {}
         editions['drafts'] = Edition.get_drafts()
-        editions['sent'] = Edition.get_sent()
+        editions['sent'] = Edition.get_sent()[:3]
 
         emails = {}
         emails['inbox'] = IncomingEmail.get_available()
@@ -89,8 +89,29 @@ class EditorView(View):
 
                             email.used = True
                             email.save()
-                pass
 
+            elif request.POST['action'] == 'Add':
+                # Create a new edition
+                if 'email_id' in request.POST and 'edition_id' in request.POST:
+                    email_ids = request.POST.getlist('email_id')
+                    if len(email_ids) > 0:
+
+                        edition = Edition.objects.get(
+                            id=request.POST['edition_id'])
+
+                        for eid in email_ids:
+                            email = IncomingEmail.objects.get(id=eid)
+
+                            edited_email = EditedEmail()
+                            edited_email.edition = edition
+                            edited_email.body = email.body
+                            edited_email.subject = email.subject
+                            edited_email.sender = email.sender
+                            edited_email.incoming = email
+                            edited_email.save()
+
+                            email.used = True
+                            email.save()
             else:
                 # Unknown method
                 pass
@@ -144,6 +165,8 @@ class EditorEditionsSingleView(View):
                     email.subject = request.POST['subject_{}'.format(email.id)]
                     email.body = request.POST['body_{}'.format(email.id)]
                     email.save()
+
+                return redirect('/editor/editions/')
 
             elif request.POST['action'] == 'Delete Selected':
                 # Delete selected emails from this edition

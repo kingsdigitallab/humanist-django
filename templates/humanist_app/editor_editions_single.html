@@ -52,7 +52,7 @@ View/Edit Edition
                 <td ><input name="sender_{{email.id}}" value="{{ email.sender }}"></td>
                 <td><input name="subject_{{email.id}}" value="{{ email.subject }}"></td>
                 <td>
-                    <textarea name="body_{{email.id}}">{{ email.body }}</textarea>
+                    <textarea class="body" name="body_{{email.id}}">{{ email.body }}</textarea>
                 </td>
             </tr>
             {% endfor %}
