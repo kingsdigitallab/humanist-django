@@ -16,18 +16,18 @@ View/Edit Edition
     <h2>{% if edition.subject %}{{ edition.subject }}{% else %}Untitled Edition{% endif %}</h2>
     <p>This edition was sent {{ edition.date_sent }}</p>
 
-    <pre>
-    {% for email in edition.editedemail_set.all %}
-    {{email.subject}} from {{ email.sender }}
+<pre>
+{% for email in edition.editedemail_set.all %}
+{{email.subject}} from {{ email.sender }}
 
-    {{ email.body }}
-    {% if not forloop.last %}
+{{ email.body }}
+{% if not forloop.last %}
 
-    -----
+-----
 
-    {% endif %}
-    {% endfor %}
-    </pre>
+{% endif %}
+{% endfor %}
+</pre>
 
 </section>
 

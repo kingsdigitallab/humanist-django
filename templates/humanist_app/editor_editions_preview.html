@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block meta_title %}
+View/Edit Edition
+{% endblock %}
+
+{% block title %}
+View/Edit Edition
+{% endblock %}
+
+{% block main %}
+
+
+<section>
+    <form action="" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="edition_id" value="{{edition.id}}">
+        <h2>{% if edition.subject %}{{ edition.subject }}{% else %}Untitled Edition{% endif %}</h2>
+
+<pre>
+{% for email in edition.editedemail_set.all %}
+{{email.subject}} from {{ email.sender }}
+
+{{ email.body }}
+{% if not forloop.last %}
+
+-----
+
+{% endif %}
+{% endfor %}
+        </pre>
+
+        <div class="controls">
+            <input type="submit" name="action" value="Back">
+            <input type="submit" name="action" class="send" value="Send">
+        </div>
+    </form>
+</section>
+
+{% endblock %}

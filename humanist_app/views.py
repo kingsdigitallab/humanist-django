@@ -168,6 +168,19 @@ class EditorEditionsSingleView(View):
 
                 return redirect('/editor/editions/')
 
+            if request.POST['action'] == 'Preview and Send':
+                # Save and do nothing
+                edition.subject = request.POST['subject']
+                edition.save()
+                for email in edition.editedemail_set.all():
+                    email.sender = request.POST['sender_{}'.format(email.id)]
+                    email.subject = request.POST['subject_{}'.format(email.id)]
+                    email.body = request.POST['body_{}'.format(email.id)]
+                    email.save()
+
+                return redirect('/editor/editions/{}/preview/'.format(
+                    edition.id))
+
             elif request.POST['action'] == 'Delete Selected':
                 # Delete selected emails from this edition
                 if 'email_id' in request.POST:
@@ -184,6 +197,32 @@ class EditorEditionsSingleView(View):
                 # Unknown method
                 pass
         return self.get(request, *args, **kwargs)
+
+
+class EditorEditionPreviewView(View):
+    template_name = 'humanist_app/editor_editions_preview.html'
+
+    @method_decorator(require_editor)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+
+        context = {}
+        edition = Edition.objects.get(id=kwargs['edition_id'])
+        context['edition'] = edition
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        edition = Edition.objects.get(id=kwargs['edition_id'])
+        if 'action' in request.POST:
+            if request.POST['action'] == 'Back':
+                return redirect('/editor/editions/{}/'.format(
+                    edition.id))
+
+            if request.POST['action'] == 'Send':
+                # Do the magic!
+                pass
 
 
 class EditorTrashView(View):
