@@ -79,6 +79,11 @@ EMAIL_USE_TLS = False
 # Sender of error messages to ADMINS and MANAGERS
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
+
+# Email Attachment location
+EMAIL_ATTACHMENT_PATH = os.path.join(BASE_DIR,
+                                     '..', '..', 'html',
+                                     'att')
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',

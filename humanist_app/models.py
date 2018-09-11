@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime, timezone
+import os
 import random
 import string
 from .helpers import UserEmail
@@ -126,6 +127,10 @@ class IncomingEmail(models.Model):
             deleted=False)
 
     @property
+    def attachments(self):
+        return self.attachment_set.all()
+
+    @property
     def user(self):
         try:
             return User.objects.get(email=self.sender)
@@ -148,5 +153,35 @@ class EditedEmail(models.Model):
         ordering = ['-date_created']
 
     @property
+    def attachments(self):
+        return self.incoming.attachments
+
+    @property
     def user(self):
         return self.incoming.user
+
+
+class Attachment(models.Model):
+    email = models.ForeignKey(IncomingEmail, on_delete=models.CASCADE)
+    original_filename = models.CharField(max_length=255,
+                                         blank=False,
+                                         null=False)
+    stored_filename = models.CharField(max_length=255,
+                                       blank=False,
+                                       null=False)
+    mimetype = models.CharField(max_length=128,
+                                blank=False,
+                                null=False)
+
+    class Meta:
+        ordering = ['id']
+
+    @property
+    def date(self):
+        return self.email.date
+
+    @property
+    def filename(self):
+        return os.path.join(settings.EMAIL_ATTACHMENT_PATH,
+                            self.email.id,
+                            self.stored_filename)
