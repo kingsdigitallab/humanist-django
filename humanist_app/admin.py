@@ -1,7 +1,13 @@
 from django.contrib import admin  # noqa
 
 # Register your models here.
-from .models import IncomingEmail, EditedEmail, Edition, Subscriber
+from .models import (IncomingEmail, EditedEmail,
+                     Edition, Subscriber, Attachment)
+
+
+@admin.register(Attachment)
+class AttachmentAdmin(admin.ModelAdmin):
+    list_display = ['email', 'original_filename']
 
 
 @admin.register(IncomingEmail)

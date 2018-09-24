@@ -7,7 +7,7 @@ from .views import (EditorView, EditorTrashView, EditorUsedView,
                     UserView, UserLogoutView, UserUpdateView,
                     UserUnsubscribeView, UserUnsubscribeConfirmView,
                     UserChangePasswordView, WebResetPasswordView,
-                    WebAnnouncementView,
+                    WebAnnouncementView, AttachmentDownloadView,
                     WebHomepageView, WebLogin, WebRestrictedDeniedView,
                     WebQuackView, WebMembershipFormView,
                     WebForgottenPasswordForm)
@@ -45,5 +45,8 @@ urlpatterns = [
 
     # Editor Pages
     path('editor/logout/', UserLogoutView.as_view()),
+
+    # Attachment downloads
+    path('att/<int:email_id>/<filename>/', AttachmentDownloadView.as_view()),
 
 ]

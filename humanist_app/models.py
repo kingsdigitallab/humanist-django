@@ -58,6 +58,9 @@ class Subscriber(models.Model):
         else:
             return False
 
+    def __str__(self):
+        return self.user
+
 
 class Edition(models.Model):
     subject = models.CharField(blank=True, null=True, max_length=2048)
@@ -78,6 +81,9 @@ class Edition(models.Model):
     @classmethod
     def get_sent(cls):
         return cls.objects.filter(sent=True)
+
+    def __str__(self):
+        return self.subject
 
 
 class IncomingEmail(models.Model):
@@ -110,6 +116,9 @@ class IncomingEmail(models.Model):
             deleted=False).filter(
             processed=True).filter(
             used=False)
+
+    def __str__(self):
+        return '{} - {}'.format(self.sender, self.subject)
 
     @classmethod
     def get_deleted(cls):
@@ -160,6 +169,9 @@ class EditedEmail(models.Model):
     def user(self):
         return self.incoming.user
 
+    def __str__(self):
+        return '{} - {}'.format(self.sender, self.subject)
+
 
 class Attachment(models.Model):
     email = models.ForeignKey(IncomingEmail, on_delete=models.CASCADE)
@@ -181,7 +193,10 @@ class Attachment(models.Model):
         return self.email.date
 
     @property
-    def filename(self):
+    def path(self):
         return os.path.join(settings.EMAIL_ATTACHMENT_PATH,
-                            self.email.id,
-                            self.stored_filename)
+                            str(self.email.id),
+                            str(self.stored_filename))
+
+    def __str__(self):
+        return '{} ({})'.format(self.original_filename, self.email)

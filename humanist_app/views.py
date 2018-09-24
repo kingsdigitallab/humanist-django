@@ -5,17 +5,29 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from .helpers import AdminEmail, UserEmail
 from django.conf import settings
-from .models import (Edition, IncomingEmail, EditedEmail, Subscriber)
+from .models import (Edition, IncomingEmail, EditedEmail,
+                     Attachment, Subscriber)
 from .decorators import require_user, require_editor
 from django.utils.decorators import method_decorator
+from wsgiref.util import FileWrapper
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 
-'''
-The following views (prefixed "Web") are the legacy
-website. I've converted them to views because:
-a) it's not a big job
-b) some of them require integration with the new app
-c) all of them require static files handling.
-'''
+import os
+
+
+class AttachmentDownloadView(View):
+
+    def get(self, request, *args, **kwargs):
+        attachment = get_object_or_404(Attachment,
+                                       email__id=kwargs['email_id'],
+                                       stored_filename=kwargs['filename'])
+        wrapper = FileWrapper(open(os.path.abspath(attachment.path), 'rb'))
+        response = HttpResponse(wrapper, content_type=attachment.mimetype)
+        response['Content-Disposition'] = 'attachment; filename={}'.format(
+            attachment.original_filename)
+        response['Content-Length'] = os.path.getsize(attachment.path)
+        return response
 
 
 class EditorView(View):
