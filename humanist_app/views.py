@@ -11,23 +11,28 @@ from .decorators import require_user, require_editor
 from django.utils.decorators import method_decorator
 from wsgiref.util import FileWrapper
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
-
+from django.core.exceptions import ObjectDoesNotExist
 import os
 
 
 class AttachmentDownloadView(View):
+    template_name = 'humanist_app/attachment_deleted.html'
 
     def get(self, request, *args, **kwargs):
-        attachment = get_object_or_404(Attachment,
-                                       email__id=kwargs['email_id'],
-                                       stored_filename=kwargs['filename'])
-        wrapper = FileWrapper(open(os.path.abspath(attachment.path), 'rb'))
-        response = HttpResponse(wrapper, content_type=attachment.mimetype)
-        response['Content-Disposition'] = 'attachment; filename={}'.format(
-            attachment.original_filename)
-        response['Content-Length'] = os.path.getsize(attachment.path)
-        return response
+        try:
+            attachment = Attachment.objects.get(
+                email__id=kwargs['email_id'],
+                stored_filename=kwargs['filename'])
+            wrapper = FileWrapper(open(os.path.abspath(attachment.path), 'rb'))
+            response = HttpResponse(wrapper, content_type=attachment.mimetype)
+            response['Content-Disposition'] = 'attachment; filename={}'.format(
+                attachment.original_filename)
+            response['Content-Length'] = os.path.getsize(attachment.path)
+            return response
+        # This handles both missing DB entries and missing
+        # files.
+        except (ObjectDoesNotExist, IOError):
+            return render(request, self.template_name, {})
 
 
 class EditorView(View):
