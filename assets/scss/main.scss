@@ -1,14 +1,17 @@
 /** Your custom scss here **/
 
 /** Colors */
-$primary: #819e6c;
-
+$primary: #93c054;
+$secondary: #577929;
+$grey: #2d2d2d;
+$text: #666666;
+$white: #ffffff;
 
 html,
 body
 {
-    color: #666666;
-    font-family: 'Helvetica', 'Verdana', 'sans-serif';
+    color: $text;
+    font-family: 'Merriweather', 'Times New Roman', 'serif';
     margin: 0;
     padding: 0;
 }
@@ -16,7 +19,7 @@ body
 a
 {
     text-decoration: none;
-    color: $primary;
+    color: $secondary;
 
 
     &:hover
@@ -170,6 +173,7 @@ form.user_form
         display: block;
         font-family: 'Courier New', 'Courier', mono;
         font-size: 1.2rem;
+        margin: 10px 0;
     }
     
     label
@@ -191,7 +195,7 @@ footer
 
         a
         {
-            color: $primary;
+            color: $secondary;
         }
     }
 }
@@ -200,17 +204,25 @@ header
 {
     h1
     {
+        color: $grey;
+        font-size: 1.8rem;
         margin: 50px 0 0 0;
     }
 }
+h2
+{
+    color: $text;
+    margin: 0;
+}
 input.send
 {
-    background: #819e6c;
+    background: $primary;
     color: #ffffff;
 
     &:hover
     {
-        background: #708d5b;
+        cursor: pointer;
+        background: $secondary;
     }
 }
 main
@@ -220,7 +232,8 @@ main
 
 nav
 {
-    background: $primary;
+    background: $grey;
+
     height: 50px;
 
     ul
@@ -234,22 +247,37 @@ nav
         {
             display: inline-block;
             font-size: 1.2rem;
+            font-weight: 00;
             line-height: 50px;
 
             &.left
             {
+                &:first-child
+                {
+                    font-weight: 400;
+                    margin: 0 0 0 50px;
+                }
+
                 float: left;
                 margin: 0 0 0 20px;
             }
 
             &:not(.left)
             {
+                &:last-child
+                {
+                    margin: 0 50px 0 0;
+                }
                 margin: 0 20px 0 0;
             }
 
             a
             {
-                color: #ffffff;
+                &:hover
+                {
+                    color: rgba(255,255,255,1);
+                }
+                color: rgba(255,255,255,0.8);
             }
         }
     }
@@ -257,7 +285,13 @@ nav
 
 section
 {
-    margin: 50px 0 0 0;
+
+    &:not(:last-child)
+    {
+        border-bottom: 1px solid #cccccc;
+    }
+    margin: 20px 0 0 0;
+    padding: 0 0 10px 0;
 }
 
 

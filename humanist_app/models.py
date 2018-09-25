@@ -7,7 +7,6 @@ import string
 from .helpers import UserEmail
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
-# This class handles any non-standard user operations
 
 
 class Subscriber(models.Model):
@@ -191,6 +190,10 @@ class Attachment(models.Model):
     @property
     def date(self):
         return self.email.date
+
+    @property
+    def url(self):
+        return '/att/{}/{}/'.format(self.email.id, self.stored_filename)
 
     @property
     def path(self):

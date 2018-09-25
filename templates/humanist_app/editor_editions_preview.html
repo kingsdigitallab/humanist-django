@@ -22,6 +22,14 @@ View/Edit Edition
 {{email.subject}} from {{ email.sender }}
 
 {{ email.body }}
+{% if email.attachments %}
+-
+Attachments:
+{% for att in email.attachments %}
+{{ att.original_filename }}: {{ request.scheme }}://{{ request.get_host }}{{ att.url }} 
+{% endfor %}
+{% endif %}
+
 {% if not forloop.last %}
 
 -----

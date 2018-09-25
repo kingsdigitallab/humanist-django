@@ -53,7 +53,15 @@ View/Edit Edition
                 <td><input name="subject_{{email.id}}" value="{{ email.subject }}"></td>
                 <td>
                     <textarea class="body" name="body_{{email.id}}">{{ email.body }}</textarea>
+                    {% if email.attachments %}
+                        <p>Attachments:
+                        {% for att in email.attachments %}
+                        <a href="{{ att.url }}" target="_blank">{{ att.original_filename }}</a> &nbsp;
+                        {% endfor %}
+                        </p>
+                    {% endif %}
                 </td>
+
             </tr>
             {% endfor %}
         </table>

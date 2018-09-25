@@ -37,6 +37,14 @@ Editor Interface
                     <span class="subject">{{ email.subject }}</span>
 
                     <div class="body">{{ email.body }}</div>
+
+                    {% if email.attachments %}
+                        <p>Attachments:
+                        {% for att in email.attachments %}
+                        <a href="{{ att.url }}" target="_blank">{{ att.original_filename }}</a> &nbsp;
+                        {% endfor %}
+                        </p>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
