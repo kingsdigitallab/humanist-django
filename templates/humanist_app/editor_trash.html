@@ -8,11 +8,16 @@ Editor Interface
 Editor Interface
 {% endblock %}
 
+{% block breadcrumb %}
+<a href="/editor">Editor</a>
+<a href="/editor/trash">Trash</a>
+{% endblock %}
+
 {% block main %}
 
 <section class="editor-formlist">
     <h2>Trash</h2>
-    <p><a href="/editor">{{ emails.inbox.count}} New</a>, <a href="/editor/used">{{ emails.used.count}} Used</a>, {{ emails.deleted.count }} Deleted</a></p>
+    {% include 'includes/email_tabs.html' with emails=emails active='trash' %}
 
     <p>The following emails are in the Trash because they have been manually deleted, or were
     received from an unknown email address.</p>

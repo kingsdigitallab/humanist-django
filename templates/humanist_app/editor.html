@@ -8,6 +8,10 @@ Editor Interface
 Editor Interface
 {% endblock %}
 
+{% block breadcrumb %}
+<a href="/editor">Editor</a>
+{% endblock %}
+
 {% block main %}
 <section class="editor-overview">
 
@@ -53,7 +57,8 @@ Editor Interface
 
 <section class="editor-formlist">
     <h2>Inbox</h2>
-    <p>{{ emails.inbox.count}} New, <a href="/editor/used">{{ emails.used.count }} Used, <a href="/editor/trash">{{ emails.deleted.count }} Deleted</a></p>
+    {% include 'includes/email_tabs.html' with emails=emails active='inbox' %}
+
 
     {% if emails.inbox.count %}
     <form action="" method="post">

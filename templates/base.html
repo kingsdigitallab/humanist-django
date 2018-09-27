@@ -19,8 +19,16 @@
     {% include 'includes/navigation.html' %}
   </nav>
 
+
   <main>
+    <div class="breadcrumb">
+    {% block breadcrumb %}
+      You have forgotten the breadcrumb on this page :).
+    {% endblock %}
+    </div>
+
     <header><h1>{% block title %}{% endblock %}</h1></header>
+
     {% block main %}
     {% endblock %}
   </main>

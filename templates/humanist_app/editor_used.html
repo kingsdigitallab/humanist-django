@@ -8,11 +8,17 @@ Editor Interface
 Editor Interface
 {% endblock %}
 
+{% block breadcrumb %}
+<a href="/editor">Editor</a>
+<a href="/editor/used">Used</a>
+{% endblock %}
+
 {% block main %}
 
 <section class="editor-formlist">
     <h2>Trash</h2>
-    <p><a href="/editor">{{ emails.inbox.count}} New</a>, {{ emails.used.count }} Used, <a href="/editor/trash">{{ emails.deleted.count }} deleted</a></p>
+    {% include 'includes/email_tabs.html' with emails=emails active='used' %}
+
 
     <p>The following emails have been marked as used.</p>
 

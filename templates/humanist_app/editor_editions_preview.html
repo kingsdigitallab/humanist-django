@@ -8,6 +8,13 @@ View/Edit Edition
 View/Edit Edition
 {% endblock %}
 
+{% block breadcrumb %}
+<a href="/editor">Editor</a>
+<a href="/editor/editions">Editions</a>
+<a href="/editor/editions/{{ edition.id }}">{{ edition.subject }}</a>
+<a href="/editor/editions/{{ edition.id }}">Preview</a>
+{% endblock %}
+
 {% block main %}
 
 

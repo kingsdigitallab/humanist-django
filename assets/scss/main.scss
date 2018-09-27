@@ -7,6 +7,9 @@ $grey: #2d2d2d;
 $text: #666666;
 $white: #ffffff;
 
+$vpadding: 20px;
+$hpadding: 20px;
+
 html,
 body
 {
@@ -36,6 +39,84 @@ a
     padding: 2px 5px;
 
     border-radius: 5px;
+}
+
+.breadcrumb
+{
+    margin: $vpadding 0 0 0;
+    overflow: hidden;
+    a
+    {
+        color: white;
+        text-decoration: none; 
+        padding: 5px 0 5px 50px;
+        background: brown; /* fallback color */
+        background: hsla(85,59%,32%,1);
+        position: relative; 
+        display: block;
+        float: left;
+        font-size: 0.9rem;
+
+        &:hover
+        {
+            border: none;
+        }
+
+        &::after
+        {
+            content: " "; 
+            display: block; 
+            width: 0; 
+            height: 0;
+            border-top: 50px solid transparent; /* Go big on the size, and let overflow hide */
+            border-bottom: 50px solid transparent;
+            border-left: 30px solid hsla(85,59%,32%,1);
+            position: absolute;
+            top: 50%;
+            margin-top: -50px; 
+            left: 100%;
+            z-index: 2; 
+        }
+
+        &::before
+        {
+            content: " "; 
+            display: block; 
+            width: 0; 
+            height: 0;
+            border-top: 50px solid transparent;       
+            border-bottom: 50px solid transparent;
+            border-left: 30px solid white;
+            position: absolute;
+            top: 50%;
+            margin-top: -50px; 
+            margin-left: 1px;
+            left: 100%;
+            z-index: 1; 
+        }
+
+        &:first-child {
+            padding-left: $hpadding;
+        }
+
+        &:nth-child(2)       { background:        hsla(85,59%,42%,1); }
+        &:nth-child(2):after { border-left-color: hsla(85,59%,42%,1); }
+        &:nth-child(3)       { background:        hsla(85,59%,52%,1); }
+        &:nth-child(3):after { border-left-color: hsla(85,59%,52%,1); }
+        &:nth-child(4)       { background:        hsla(85,59%,62%,1); }
+        &:nth-child(4):after { border-left-color: hsla(85,59%,62%,1); }
+        &:nth-child(5)       { background:        hsla(85,59%,72%,1); }
+        &:nth-child(5):after { border-left-color: hsla(85,59%,72%,1); }
+
+        
+
+        &:hover { 
+            background: hsla(85,59%,22%,1); 
+        }
+        &:hover:after { 
+            border-left-color: hsla(85,59%,22%,1) !important; 
+        }
+    }
 }
 
 .editor-formlist
@@ -102,7 +183,7 @@ a
         .subject
         {
             display: block;
-            padding: 0 0 20px 0;
+            padding: 0 0 $vpadding 0;
             font-weight: bold;
         }
 
@@ -191,7 +272,7 @@ footer
 
     div
     {
-        padding: 60px 20px;
+        padding: 60px $hpadding;
 
         a
         {
@@ -206,7 +287,7 @@ header
     {
         color: $grey;
         font-size: 1.8rem;
-        margin: 50px 0 0 0;
+        margin: $vpadding 0 0 0;
     }
 }
 h2
@@ -227,7 +308,7 @@ input.send
 }
 main
 {
-    padding: 0 20px;
+    padding: 0 $hpadding;
 }
 
 nav
@@ -290,7 +371,7 @@ section
     {
         border-bottom: 1px solid #cccccc;
     }
-    margin: 20px 0 0 0;
+    margin: $vpadding 0 0 0;
     padding: 0 0 10px 0;
 }
 
@@ -298,4 +379,71 @@ section
 .success
 {
     color: #00aa00;
+}
+
+.tabs
+{
+    display: flex;
+    list-style: none;
+    margin:10px 0 0 0;
+    padding: 0;
+
+    li
+    {
+        display: inline-block;
+        padding: 0;
+
+        a
+        {
+            display: block;
+            padding: 5px 10px;
+
+            &:hover
+            {
+                border: none; 
+            }
+        }
+
+        &.active
+        {
+            background-color: $secondary;
+
+            &:hover
+            {
+                background-color: #3f581e;
+            }
+
+            a
+            {
+                color: $white;
+            }
+        }
+
+        &:not(.active)
+        {
+            background-color: #eeeeee;
+
+            &:hover
+            {
+                background-color: #bbbbbb;
+            }
+
+            a
+            {
+                color: $grey;
+            }
+        }
+
+        &:first-child
+        {
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+        }
+
+        &:last-child
+        {
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+    }
 }

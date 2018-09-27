@@ -1,0 +1,5 @@
+<ul class="tabs">
+        <li {% if active == 'inbox' %} class="active"{% endif %}><a href="/editor">Inbox ({{ emails.inbox.count}})</a></li>
+        <li{% if active == 'used' %} class="active"{% endif %}><a href="/editor/used">Used ({{ emails.used.count}})</a></li>
+        <li {% if active == 'trash' %} class="active"{% endif %}><a href="/editor/trash">Trash ({{ emails.deleted.count }})</a></li>
+</ul>
