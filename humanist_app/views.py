@@ -239,6 +239,9 @@ class EditorEditionPreviewView(View):
 
             if request.POST['action'] == 'Send':
                 # Do the magic!
+
+                # Remember to set volume and issue vars!
+
                 pass
 
 

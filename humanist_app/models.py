@@ -7,6 +7,7 @@ import string
 from .helpers import UserEmail
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from dateutil.relativedelta import relativedelta
 
 
 class Subscriber(models.Model):
@@ -69,6 +70,8 @@ class Edition(models.Model):
         blank=False, null=False, auto_now=True)
     date_sent = models.DateTimeField(blank=True, null=True)
     sent = models.BooleanField(blank=False, default=False)
+    volume = models.IntegerField(blank=True, null=True)
+    issue = models.IntegerField(blank=True, null=True)
 
     class Meta:
         ordering = ['-date_created']
@@ -83,6 +86,20 @@ class Edition(models.Model):
 
     def __str__(self):
         return self.subject
+
+    # Helper functions to get the current Volume and Issue numbers
+    @classmethod
+    def get_current_volume(cls):
+        start_date = datetime(1988, 5, 7, 0, 0)
+        current_date = datetime.now()
+        difference_in_years = relativedelta(current_date, start_date).years
+        return (difference_in_years + 1)
+
+    @classmethod
+    def get_current_issue(cls):
+        editions_in_volume = cls.objects.filter(
+            volume=cls.get_current_volume()).count()
+        return (editions_in_volume + 1)
 
 
 class IncomingEmail(models.Model):
