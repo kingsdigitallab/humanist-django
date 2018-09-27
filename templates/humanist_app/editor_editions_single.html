@@ -41,7 +41,7 @@ View/Edit Edition
 
 <section class="editor-formlist">
     <form action="" method="post">
-        <p>Edition Subject: <input name="subject" value="{{ edition.subject }}"></p>
+        <p>Edition Subject: <input name="subject" value="{% if edition.subject %}{{ edition.subject }}{% endif %}"></p>
         {% csrf_token %}
         <table>
             <tr>
