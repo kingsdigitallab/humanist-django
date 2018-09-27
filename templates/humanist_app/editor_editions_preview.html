@@ -11,7 +11,7 @@ View/Edit Edition
 {% block breadcrumb %}
 <a href="/editor">Editor</a>
 <a href="/editor/editions">Editions</a>
-<a href="/editor/editions/{{ edition.id }}">{{ edition.subject }}</a>
+<a href="/editor/editions/{{ edition.id }}">{% if edition.subject %}{{ edition.subject }}{% else %}Untitled Edition{% endif %}</a>
 <a href="/editor/editions/{{ edition.id }}">Preview</a>
 {% endblock %}
 
