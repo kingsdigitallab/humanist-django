@@ -13,6 +13,8 @@ from wsgiref.util import FileWrapper
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 import os
+from django.core.paginator import Paginator
+from django.db.models import Q
 
 
 class AttachmentDownloadView(View):
@@ -336,6 +338,148 @@ class EditorUsedView(View):
                 pass
 
         return self.get(request, args, kwargs)
+
+
+class EditorUsersView(View):
+    template_name = 'humanist_app/editor_users.html'
+
+    @method_decorator(require_editor)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+
+        context = {}
+
+        if 'q' in request.GET:
+            q = request.GET.get('q')
+            context['q'] = q
+            users = Subscriber.objects.filter(
+                Q(user__first_name__icontains=q) |
+                Q(user__last_name__icontains=q) |
+                Q(user__email__icontains=q) |
+                Q(bio__icontains=q))
+        else:
+            users = Subscriber.objects.all()
+
+        paginator = Paginator(users, 25)
+
+        if 'page' in request.GET:
+            page = request.GET.get('page')
+        else:
+            page = 1
+
+        context['users'] = paginator.get_page(page)
+
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        required_fields = ['id', 'action']
+        context = {}
+
+        for field in required_fields:
+            if field not in request.POST:
+                context['error'] = "There was an error with the form"
+                return render(request, self.template_name, context)
+
+        for field in required_fields:
+            if not request.POST[field]:
+                context['error'] = "A field was missing"
+                return render(request, self.template_name, context)
+
+        user = User.objects.get(pk=request.POST['id'])
+        action = request.POST['action']
+
+        if action == "Promote to Admin":
+            user.is_staff = True
+            user.save()
+            context['success'] = "{} Promoted".format(user.email)
+
+        elif action == "Remove":
+            user.delete()
+            context['success'] = "Deleted: {}".format(user.email)
+
+        if 'q' in request.GET:
+            q = request.GET.get('q')
+            context['q'] = q
+            users = Subscriber.objects.filter(
+                Q(user__first_name__icontains=q) |
+                Q(user__last_name__icontains=q) |
+                Q(user__email__icontains=q) |
+                Q(bio__icontains=q))
+        else:
+            users = Subscriber.objects.all()
+
+        paginator = Paginator(users, 25)
+
+        if 'page' in request.GET:
+            page = request.GET.get('page')
+        else:
+            page = 1
+
+        context['users'] = paginator.get_page(page)
+        return render(request, self.template_name, context)
+
+
+class EditorUsersAdminsView(View):
+    template_name = 'humanist_app/editor_users_admins.html'
+
+    @method_decorator(require_editor)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+
+        context = {}
+
+        users = Subscriber.objects.filter(user__is_staff=True)
+        paginator = Paginator(users, 25)
+
+        if 'page' in request.GET:
+            page = request.GET.get('page')
+        else:
+            page = 1
+
+        context['users'] = paginator.get_page(page)
+
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        required_fields = ['id', 'action']
+        context = {}
+
+        for field in required_fields:
+            if field not in request.POST:
+                context['error'] = "There was an error with the form"
+                return render(request, self.template_name, context)
+
+        for field in required_fields:
+            if not request.POST[field]:
+                context['error'] = "A field was missing"
+                return render(request, self.template_name, context)
+
+        user = User.objects.get(pk=request.POST['id'])
+        action = request.POST['action']
+
+        if action == "Demote":
+            if not user.is_superuser:
+                user.is_staff = False
+                user.save()
+                context['success'] = "{} Demoted".format(user.email)
+            else:
+                context['error'] = "Cannot demote a superuser."
+
+        users = Subscriber.objects.filter(user__is_staff=True)
+
+        paginator = Paginator(users, 25)
+
+        if 'page' in request.GET:
+            page = request.GET.get('page')
+        else:
+            page = 1
+
+        context['users'] = paginator.get_page(page)
+        return render(request, self.template_name, context)
 
 
 class EditorUsersUnapprovedView(View):

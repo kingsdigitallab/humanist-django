@@ -40,6 +40,9 @@ class Subscriber(models.Model):
 
         return self.pw_reset_key
 
+    class Meta:
+        ordering = ['user__last_name', 'user__first_name']
+
     def validate_password_reset_key(self, key):
         if self.pw_reset_key and self.pw_reset_date:
             timedelta = datetime.now(timezone.utc) - self.pw_reset_date

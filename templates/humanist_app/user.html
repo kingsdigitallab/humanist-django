@@ -8,6 +8,10 @@ User Panel
 User Panel
 {% endblock %}
 
+{% block breadcrumb %}
+<a href="/user">User Panel</a>
+{% endblock %}
+
 {% block main %}
 <section>
     <p>Hello <strong>{% if request.user.first_name %}{{ request.user.first_name }}{% endif %}</strong></p>

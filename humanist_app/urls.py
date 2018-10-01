@@ -4,6 +4,7 @@ from django.urls import path
 from .views import (EditorView, EditorTrashView, EditorUsedView,
                     EditorEditionsSingleView, EditorEditionPreviewView,
                     EditorUsersUnapprovedView, EditorEditionsView,
+                    EditorUsersView, EditorUsersAdminsView,
                     UserView, UserLogoutView, UserUpdateView,
                     UserUnsubscribeView, UserUnsubscribeConfirmView,
                     UserChangePasswordView, WebResetPasswordView,
@@ -33,6 +34,9 @@ urlpatterns = [
          EditorEditionsSingleView.as_view()),
     path('editor/editions/<int:edition_id>/preview/',
          EditorEditionPreviewView.as_view()),
+
+    path('editor/users/', EditorUsersView.as_view()),
+    path('editor/users/admins/', EditorUsersAdminsView.as_view()),
     path('editor/users/unapproved/', EditorUsersUnapprovedView.as_view()),
 
     # User Pages

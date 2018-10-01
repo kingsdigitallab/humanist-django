@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block meta_title %}
+Users
+{% endblock %}
+
+{% block title %}
+Users
+{% endblock %}
+
+{% block breadcrumb %}
+<a href="/editor">Editor</a>
+<a href="/editor/users">Users</a>
+{% endblock %}
+
+{% block main %}
+<section>
+
+
+    {% if error %}
+    <p class="error">{{ error }}</p>
+    {% endif %}
+
+    {% if success %}
+    <p class="success">{{ success }}</p>
+    {% endif %}
+
+
+    <form action="" method="get">
+        <strong>Search:</strong> <input name="q" placeholder="Search" value="{{ q }}">
+        {% if q %}(<a href="?">x</a>){% endif %}
+        <input type="submit" value="Search">
+    </form>
+
+    {% for user in users %}
+
+        <p>
+            <strong>{{ user.user.first_name}} {{ user.user.last_name}}</strong> - {{ user.user.email }}
+        </p>
+        <p>
+        {% if user.bio %}
+            {{ user.bio }}
+        {% else %}
+            No bio entered during registration.
+        {% endif %}
+
+        {% if user.user.is_staff %}
+        <p class="success"><strong>Is an admin.</strong></p>
+        {% else %}
+        <form action="" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="id" value="{{user.user.id}}">
+            <input type="submit" name="action" value="Promote to Admin">
+            <input type="submit" name="action" value="Remove">
+        </form>
+        {% endif %}
+
+        {% if not forloop.last %}
+        <hr>
+        {% endif %}
+    {% endfor %}
+
+    <div class="pagination">
+    <p class="step-links">
+        {% if users.has_previous %}
+            <a href="?{% if q %}q={{ q }}&{% endif %}page=1">&laquo; first</a> /
+            <a href="?{% if q %}q={{ q }}&{% endif %}page={{ users.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ users.number }} of {{ users.paginator.num_pages }}
+        </span>
+
+        {% if users.has_next %}
+            <a href="?{% if q %}q={{ q }}&{% endif %}page={{ users.next_page_number }}">next</a> /
+            <a href="?{% if q %}q={{ q }}&{% endif %}page={{ users.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </p>
+</div>
+</section>
+
+
+
+
+{% endblock %}

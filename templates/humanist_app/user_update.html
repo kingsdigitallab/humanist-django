@@ -8,6 +8,12 @@ User Update
 User Update
 {% endblock %}
 
+
+{% block breadcrumb %}
+<a href="/user">User Panel</a>
+<a href="/user/update">Update</a>
+{% endblock %}
+
 {% block main %}
 <section>
     <p>You are currently subscribed to Humanist using the email address {{request.user.email}}.</p>
