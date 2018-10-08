@@ -22,16 +22,7 @@ View/Edit Edition
     <p>This edition was sent {{ edition.date_sent }}</p>
 
 <pre>
-{% for email in edition.editedemail_set.all %}
-{{email.subject}} from {{ email.sender }}
-
-{{ email.body }}
-{% if not forloop.last %}
-
------
-
-{% endif %}
-{% endfor %}
+{% include "includes/outgoing_template.html" with edition=edition %}
 </pre>
 
 </section>

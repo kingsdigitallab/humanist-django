@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from .helpers import AdminEmail, UserEmail
+from .helpers import AdminEmail, UserEmail, ActiveUserEmail
 from django.conf import settings
 from .models import (Edition, IncomingEmail, EditedEmail,
                      Attachment, Subscriber)
@@ -15,6 +15,9 @@ from django.core.exceptions import ObjectDoesNotExist
 import os
 from django.core.paginator import Paginator
 from django.db.models import Q
+
+from django.template.loader import render_to_string
+from datetime import datetime
 
 
 class AttachmentDownloadView(View):
@@ -230,6 +233,9 @@ class EditorEditionPreviewView(View):
         context = {}
         edition = Edition.objects.get(id=kwargs['edition_id'])
         context['edition'] = edition
+        context['current_volume'] = Edition.get_current_volume()
+        context['current_issue'] = Edition.get_current_issue()
+
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
@@ -243,8 +249,26 @@ class EditorEditionPreviewView(View):
                 # Do the magic!
 
                 # Remember to set volume and issue vars!
+                edition.volume = Edition.get_current_volume()
+                edition.issue = Edition.get_current_issue()
+                edition.save()
 
-                pass
+                body = render_to_string('includes/outgoing_template.html',
+                                        {'edition': edition})
+
+                subject = '[Humanist] {}.{}: {}'.format(
+                    edition.volume, edition.issue, edition.subject)
+
+                email = ActiveUserEmail()
+                email.subject = subject
+                email.body = body
+                email.send()
+
+                edition.sent = True
+                edition.date_sent = datetime.now()
+                edition.save()
+
+                return redirect('/editor/editions/')
 
 
 class EditorTrashView(View):

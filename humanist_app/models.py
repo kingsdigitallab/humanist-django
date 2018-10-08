@@ -90,13 +90,47 @@ class Edition(models.Model):
     def __str__(self):
         return self.subject
 
+    # Note: whilst unconventional, this allows us to add extra
+    # data into the final script
+    def data(self):
+        data = {}
+        data['emails'] = []
+        number = 1
+        for e in self.editedemail_set.order_by('subject').all():
+            email = {}
+            email['number'] = number
+            number += 1
+            email['line_count'] = len(e.body.split('\n'))
+            email['message'] = e
+            email['incoming'] = e.incoming
+
+            # Get user (if we can)
+            if User.objects.filter(email__iexact=e.sender).count():
+                user = User.objects.get(email__iexact=e.sender)
+                email['sender'] = "{} {} <{}>".format(
+                    user.first_name,
+                    user.last_name,
+                    user.email)
+            else:
+                email['sender'] = e.sender
+
+            if 're:' in e.subject.lower():
+                email['is_reply'] = True
+            else:
+                email['is_reply'] = False
+
+            # Add it to the list
+            data['emails'].append(email)
+
+        return data
+
     # Helper functions to get the current Volume and Issue numbers
     @classmethod
     def get_current_volume(cls):
         start_date = datetime(1988, 5, 7, 0, 0)
         current_date = datetime.now()
         difference_in_years = relativedelta(current_date, start_date).years
-        return (difference_in_years + 1)
+        return (difference_in_years + 2)
 
     @classmethod
     def get_current_issue(cls):

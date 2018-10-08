@@ -31,9 +31,8 @@ class AdminEmail(Email):
 # Send an email to all active users
 class ActiveUserEmail(Email):
     def __init__(self):
-        users = User.objects.filter(is_actve=True)
-        self.to = list(users.values_list('email', flat=True))
-        if 'PROJECT_FROM_EMAIL' in settings:
+        self.to = settings.PROJECT_EMAIL_TARGET
+        if hasattr(settings, 'PROJECT_FROM_EMAIL'):
             self.sender = 'Humanist <{}>'.format(settings.PROJECT_FROM_EMAIL)
         else:
             self.sender = 'Humanist <{}>'.format(settings.DEFAULT_FROM_EMAIL)

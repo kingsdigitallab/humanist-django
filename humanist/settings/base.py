@@ -68,6 +68,9 @@ PROJECT_INCOMING_EMAIL = ''
 # Location of list of users who can send email to the system
 EMAIL_ALLOW_LIST = ''
 
+# Target for all members emails:
+PROJECT_EMAIL_TARGET = ''
+
 
 EMAIL_HOST = 'localhost'
 EMAIL_PORT = 25
