@@ -62,7 +62,8 @@ class Subscriber(models.Model):
             return False
 
     def __str__(self):
-        return self.user
+        return '{} {}'.format(self.user.first_name,
+                              self.user.last_name)
 
 
 class Edition(models.Model):
