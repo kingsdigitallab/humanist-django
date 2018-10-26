@@ -4,20 +4,20 @@
                 Submit to: humanist@lists.digitalhumanities.org
 
 {% for email in edition.data.emails %}
-    [{{ email.number }}]    From: {{ email.sender }}
-           Subject: {{ email.message.subject }} ({{ email.line_count}})
+    [{{ email.number }}]    From: {{ email.sender|safe }}
+           Subject: {{ email.message.subject|safe }} ({{ email.line_count}})
 {% endfor %}
 
 {% for email in edition.data.emails %}--[{{ email.number }}]------------------------------------------------------------------------
-        Date: {{ email.incoming.date }}
-        From: {{ email.sender }}
-        Subject: {{ email.message.subject }}
+        Date: {{ email.incoming.date|safe }}
+        From: {{ email.sender|safe }}
+        Subject: {{ email.message.subject|safe }}
 
-{{ email.message.body }}
+{{ email.message.body|safe }}
 {% if email.message.attachments %}
 
 Attachments:
-{% for att in email.message.attachments %}{{ att.original_filename }}: {{ request.scheme }}://{{ request.get_host }}{{ att.url }} 
+{% for att in email.message.attachments %}{{ att.original_filename }}: https://dhhumanist.org{{ att.url }} 
 {% endfor %}
 {% endif %}
 {% endfor %}
