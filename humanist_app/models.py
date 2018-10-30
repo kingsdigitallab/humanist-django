@@ -131,15 +131,15 @@ class Edition(models.Model):
         start_date = datetime(1988, 5, 7, 0, 0)
         current_date = datetime.now()
         difference_in_years = relativedelta(current_date, start_date).years
-        return (difference_in_years + 1)
+        return (difference_in_years + 2)
 
     @classmethod
     def get_current_issue(cls):
         editions_in_volume = cls.objects.filter(
             volume=cls.get_current_volume()).count()
 
-        if cls.get_current_volume() == 31:
-            return (editions_in_volume + 730)
+        if cls.get_current_volume() == 32:
+            return (editions_in_volume + 136)
         else:
             return (editions_in_volume + 1)
 
