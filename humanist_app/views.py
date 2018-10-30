@@ -256,27 +256,36 @@ class EditorEditionPreviewView(View):
             if request.POST['action'] == 'Send':
                 # Do the magic!
 
-                # Remember to set volume and issue vars!
-                edition.volume = Edition.get_current_volume()
-                edition.issue = Edition.get_current_issue()
-                edition.save()
+                if edition.subject == '' or edition.subject is None:
+                    context = {}
+                    context['edition'] = edition
+                    context['current_volume'] = Edition.get_current_volume()
+                    context['current_issue'] = Edition.get_current_issue()
+                    context['error'] = "Subject can not be blank!\
+                        Please fix this."
+                    return render(request, self.template_name, context)
+                else:
+                    # Remember to set volume and issue vars!
+                    edition.volume = Edition.get_current_volume()
+                    edition.issue = Edition.get_current_issue()
+                    edition.save()
 
-                body = render_to_string('includes/outgoing_template.html',
-                                        {'edition': edition})
+                    body = render_to_string('includes/outgoing_template.html',
+                                            {'edition': edition})
 
-                subject = '[Humanist] {}.{}: {}'.format(
-                    edition.volume, edition.issue, edition.subject)
+                    subject = '[Humanist] {}.{}: {}'.format(
+                        edition.volume, edition.issue, edition.subject)
 
-                email = ActiveUserEmail()
-                email.subject = subject
-                email.body = body
-                email.send()
+                    email = ActiveUserEmail()
+                    email.subject = subject
+                    email.body = body
+                    email.send()
 
-                edition.sent = True
-                edition.date_sent = datetime.now()
-                edition.save()
+                    edition.sent = True
+                    edition.date_sent = datetime.now()
+                    edition.save()
 
-                return redirect('/editor/editions/')
+                    return redirect('/editor/editions/')
 
 
 class EditorTrashView(View):
