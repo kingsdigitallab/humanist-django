@@ -63,6 +63,14 @@ Editor Interface
     {% if emails.inbox.count %}
     <form action="" target="_blank" method="post">
         {% csrf_token %}
+
+        <div class="controls">
+            <input type="submit" name="action" value="Create Edition">
+            <input type="submit" name="action" value="Mark as Used"> 
+            <input type="submit" name="action" value="Delete"> 
+           
+        </div>
+
         <table>
             <tr>
                 <th></th>
