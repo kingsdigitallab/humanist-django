@@ -48,6 +48,10 @@ class EditorView(View):
         return super().dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
+        if 'page' in request.GET:
+            page = request.GET['page']
+        else:
+            page = 1
 
         user_counts = {}
         user_counts['active'] = User.objects.filter(is_active=True).count()
@@ -65,9 +69,13 @@ class EditorView(View):
         emails['used'] = IncomingEmail.get_used()
         emails['deleted'] = IncomingEmail.get_deleted()
 
+        p = Paginator(emails['inbox'], 50)
+        email_display = p.get_page(page)
+
         context = {}
-        context['editions'] = editions
         context['emails'] = emails
+        context['email_display'] = email_display
+        context['editions'] = editions
         context['user_counts'] = user_counts
         context['users_inactive'] = users_inactive
 
@@ -296,14 +304,22 @@ class EditorTrashView(View):
         return super().dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
+        if 'page' in request.GET:
+            page = request.GET['page']
+        else:
+            page = 1
 
         emails = {}
         emails['inbox'] = IncomingEmail.get_available()
         emails['used'] = IncomingEmail.get_used()
         emails['deleted'] = IncomingEmail.get_deleted()
 
+        p = Paginator(emails['deleted'], 50)
+        email_display = p.get_page(page)
+
         context = {}
         context['emails'] = emails
+        context['email_display'] = email_display
 
         return render(request, self.template_name, context)
 
@@ -338,15 +354,22 @@ class EditorUsedView(View):
         return super().dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
+        if 'page' in request.GET:
+            page = request.GET['page']
+        else:
+            page = 1
 
         emails = {}
         emails['inbox'] = IncomingEmail.get_available()
         emails['used'] = IncomingEmail.get_used()
         emails['deleted'] = IncomingEmail.get_deleted()
 
+        p = Paginator(emails['used'], 50)
+        email_display = p.get_page(page)
+
         context = {}
         context['emails'] = emails
-
+        context['email_display'] = email_display
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):

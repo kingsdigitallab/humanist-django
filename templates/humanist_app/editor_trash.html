@@ -34,7 +34,7 @@ Editor Interface
             </tr>
 
             <!-- emails -->
-            {% for email in emails.deleted %}
+            {% for email in email_display %}
             <tr>
                 <td><input type="checkbox" name="email_id" value="{{email.id}}"></td>
                 <td class="date">{{ email.date }}</td>
@@ -58,6 +58,24 @@ Editor Interface
         <div class="controls">
             <input type="submit" name="action" value="Restore"> 
             <input type="submit" name="action" value="Empty Trash"> 
+        </div>
+
+        <div class="pagination">
+            <span class="step-links">
+                {% if email_display.has_previous %}
+                    <a href="?page=1">&laquo; first</a>
+                    <a href="?page={{ email_display.previous_page_number }}">previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ email_display.number }} of {{ email_display.paginator.num_pages }}.
+                </span>
+
+                {% if email_display.has_next %}
+                    <a href="?page={{ email_display.next_page_number }}">next</a>
+                    <a href="?page={{ email_display.paginator.num_pages }}">last &raquo;</a>
+                {% endif %}
+            </span>
         </div>
     {% else %}
     <p>There are no deleted emails.</p>
