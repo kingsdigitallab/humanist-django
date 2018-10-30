@@ -139,7 +139,7 @@ class Edition(models.Model):
             volume=cls.get_current_volume()).count()
 
         if cls.get_current_volume() == 32:
-            return (editions_in_volume + 136)
+            return (editions_in_volume + 144)
         else:
             return (editions_in_volume + 1)
 
