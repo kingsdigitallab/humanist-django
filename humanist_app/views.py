@@ -54,6 +54,8 @@ class EditorView(View):
         user_counts['inactive'] = User.objects.filter(is_active=False).count()
         user_counts['admin'] = User.objects.filter(is_staff=True).count()
 
+        users_inactive = User.objects.filter(is_active=False)
+
         editions = {}
         editions['drafts'] = Edition.get_drafts()
         editions['sent'] = Edition.get_sent()[:3]
@@ -67,6 +69,8 @@ class EditorView(View):
         context['editions'] = editions
         context['emails'] = emails
         context['user_counts'] = user_counts
+        context['users_inactive'] = users_inactive
+
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
@@ -111,6 +115,7 @@ class EditorView(View):
 
                             email.used = True
                             email.save()
+                    return redirect('/editor/editions/{}/'.format(edition.id))
 
             elif request.POST['action'] == 'Add':
                 # Create a new edition
@@ -134,6 +139,9 @@ class EditorView(View):
 
                             email.used = True
                             email.save()
+
+                        return redirect('/editor/editions/{}/'.format(
+                            edition.id))
             else:
                 # Unknown method
                 pass
