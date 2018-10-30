@@ -3,12 +3,10 @@
                        www.dhhumanist.org
                 Submit to: humanist@dhhumanist.org
 
-{% if edition.data.emails|length > 1 %}
-{% for email in edition.data.emails %}
+{% if edition.data.emails|length > 1 %}{% for email in edition.data.emails %}
     [{{ email.number }}]    From: {{ email.sender|safe }}
            Subject: {{ email.message.subject|safe }} ({{ email.line_count}})
-{% endfor %}
-{% endif %}
+{% endfor %}{% endif %}
 
 {% for email in edition.data.emails %}{% if edition.data.emails|length > 1 %}--[{{ email.number }}]------------------------------------------------------------------------{% endif %}
         Date: {{ email.incoming.date|safe }}
