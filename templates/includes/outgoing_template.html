@@ -3,10 +3,12 @@
                        www.digitalhumanities.org/humanist
                 Submit to: humanist@lists.digitalhumanities.org
 
+{% if edition.data.emails|length > 1 %}
 {% for email in edition.data.emails %}
     [{{ email.number }}]    From: {{ email.sender|safe }}
            Subject: {{ email.message.subject|safe }} ({{ email.line_count}})
 {% endfor %}
+{% endif %}
 
 {% for email in edition.data.emails %}--[{{ email.number }}]------------------------------------------------------------------------
         Date: {{ email.incoming.date|safe }}
