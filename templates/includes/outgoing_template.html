@@ -10,7 +10,7 @@
 {% endfor %}
 {% endif %}
 
-{% for email in edition.data.emails %}--[{{ email.number }}]------------------------------------------------------------------------
+{% for email in edition.data.emails %}{% if edition.data.emails|length > 1 %}--[{{ email.number }}]------------------------------------------------------------------------{% endif %}
         Date: {{ email.incoming.date|safe }}
         From: {{ email.sender|safe }}
         Subject: {{ email.message.subject|safe }}
