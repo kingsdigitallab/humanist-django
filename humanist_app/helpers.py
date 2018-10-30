@@ -1,4 +1,4 @@
-from django.core.mail import send_mail  # noqa
+from django.core.mail import send_mail, get_connection  # noqa
 from django.contrib.auth.models import User
 from django.conf import settings
 # Send a single email
@@ -12,10 +12,14 @@ class Email():
 
     def send(self):
         if self.to and self.sender and self.subject and self.body:
+            connection = get_connection(host='smtp.kdl.kcl.ac.uk',
+                                        port=25)
             try:
                 if not type(self.to) == 'list':
                     self.to = [self.to]
-                return send_mail(self.subject, self.body, self.sender, self.to)
+                return send_mail(self.subject, self.body,
+                                 self.sender, self.to,
+                                 connection=connection)
             except:  # noqa
                 return False
 
@@ -36,6 +40,15 @@ class ActiveUserEmail(Email):
             self.sender = 'Humanist <{}>'.format(settings.PROJECT_FROM_EMAIL)
         else:
             self.sender = 'Humanist <{}>'.format(settings.DEFAULT_FROM_EMAIL)
+
+    def send(self):
+        if self.to and self.sender and self.subject and self.body:
+            try:
+                if not type(self.to) == 'list':
+                    self.to = [self.to]
+                return send_mail(self.subject, self.body, self.sender, self.to)
+            except:  # noqa
+                return False
 
 
 # Send an email to a specific user
