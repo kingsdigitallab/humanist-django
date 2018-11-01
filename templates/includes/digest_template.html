@@ -1,0 +1,35 @@
+{% for edition in editions %}
+
+                  Humanist Discussion Group, Vol. {{ edition.volume }}, No. {{ edition.issue }}.
+            Department of Digital Humanities, King's College London
+                       www.dhhumanist.org
+                Submit to: humanist@dhhumanist.org
+
+{% if edition.data.emails|length > 1 %}{% for email in edition.data.emails %}
+    [{{ email.number }}]    From: {{ email.sender|safe }}
+           Subject: {{ email.message.subject|safe }} ({{ email.line_count}})
+{% endfor %}{% endif %}
+
+{% for email in edition.data.emails %}{% if edition.data.emails|length > 1 %}--[{{ email.number }}]------------------------------------------------------------------------{% endif %}
+        Date: {{ email.incoming.date|safe }}
+        From: {{ email.sender|safe }}
+        Subject: {{ email.message.subject|safe }}
+
+{{ email.message.body|safe }}
+{% if email.message.attachments %}
+
+Attachments:
+{% for att in email.message.attachments %}{{ att.original_filename }}: https://dhhumanist.org{{ att.url }} 
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% if not forloop.last %}
+-------
+{% endif %}
+{% endfor %}
+_______________________________________________
+Unsubscribe at: http://dhhumanist.org/Restricted
+List posts to: humanist@dhhumanist.org
+List info and archives at at: http://dhhumanist.org
+Listmember interface at: http://dhhumanist.org/Restricted/
+Subscribe at: http://dhhumanist.org/membership_form.php

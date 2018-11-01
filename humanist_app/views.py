@@ -338,7 +338,8 @@ class EditorTrashView(View):
                 # Empty the trash
                 emails = IncomingEmail.get_deleted()
                 for email in emails:
-                    email.delete()
+                    email.purged = True
+                    email.save()
 
             else:
                 # Unknown method

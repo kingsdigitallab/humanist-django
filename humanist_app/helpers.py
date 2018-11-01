@@ -29,7 +29,7 @@ class AdminEmail(Email):
     def __init__(self):
         admins = User.objects.filter(is_staff=True)
         self.to = list(admins.values_list('email', flat=True))
-        self.sender = 'Humanist Admin <{}>'.format(settings.DEFAULT_FROM_EMAIL)
+        self.sender = 'Humanist <{}>'.format(settings.DEFAULT_FROM_EMAIL)
 
 
 # Send an email to all active users
@@ -55,4 +55,4 @@ class ActiveUserEmail(Email):
 class UserEmail(Email):
     def __init__(self, user):
         self.to = user.email
-        self.sender = 'Humanist Admin <{}>'.format(settings.DEFAULT_FROM_EMAIL)
+        self.sender = 'Humanist <{}>'.format(settings.DEFAULT_FROM_EMAIL)

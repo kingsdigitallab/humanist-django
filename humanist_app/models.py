@@ -158,6 +158,8 @@ class IncomingEmail(models.Model):
     processed = models.BooleanField(null=False, default=False)
     log = models.TextField(blank=True, null=True)
 
+    purged = models.BooleanField(null=False, default=False)
+
     class Meta:
         ordering = ['-date']
 
@@ -181,7 +183,9 @@ class IncomingEmail(models.Model):
 
     @classmethod
     def get_deleted(cls):
-        return cls.objects.filter(deleted=True)
+        return cls.objects.filter(
+            deleted=True).filter(
+            purged=False)
 
     @classmethod
     def get_unused(cls):
@@ -215,7 +219,7 @@ class EditedEmail(models.Model):
         blank=False, null=False, auto_now=True)
     subject = models.CharField(blank=True, null=True, max_length=2048)
     sender = models.CharField(blank=False, null=False, max_length=256)
-    incoming = models.ForeignKey(IncomingEmail, on_delete=models.SET_NULL,
+    incoming = models.ForeignKey(IncomingEmail, on_delete=models.CASCADE,
                                  blank=True, null=True)
 
     class Meta:
