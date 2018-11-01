@@ -8,6 +8,7 @@ def build_user_list(sender, instance, signal, *args, **kwargs):
     if sender is User or sender is Subscriber:
         user_list = '\n'.join(Subscriber.objects.filter(
             user__is_active=True).filter(
+            bounce_disabled=False).filter(
             digest=False).values_list(
             'user__email', flat=True))
         try:

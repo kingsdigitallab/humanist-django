@@ -16,6 +16,8 @@ class Subscriber(models.Model):
     pw_reset_key = models.CharField(null=True, blank=True, max_length=128)
     pw_reset_date = models.DateTimeField(blank=True, null=True)
     digest = models.BooleanField(default=False, verbose_name="Receive Digest?")
+    bounce_count = models.IntegerField(default=0)
+    bounce_disabled = models.BooleanField(default=False)
 
     def generate_password_reset_key(self):
         self.pw_reset_key = ''.join(
