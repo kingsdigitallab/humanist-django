@@ -1,12 +1,15 @@
 from django.db.models.signals import pre_save, post_save
 from django.contrib.auth.models import User
 from django.conf import settings
+from humanist_app.models import Subscriber
 
 
 def build_user_list(sender, instance, signal, *args, **kwargs):
     if sender is User:
-        user_list = '\n'.join(User.objects.filter(
-            is_active=True).values_list('email', flat=True))
+        user_list = '\n'.join(Subscriber.objects.filter(
+            user__is_active=True).filter(
+            digest=False).values_list(
+            'user__email', flat=True))
         try:
             with open(settings.EMAIL_ALLOW_LIST, 'w') as f:
                 f.write(user_list)

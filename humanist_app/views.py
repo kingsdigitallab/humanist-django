@@ -679,38 +679,53 @@ class UserUpdateView(View):
         return super().dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name, {})
+        subscriber = Subscriber.objects.get(user=request.user)
+        return render(request, self.template_name, {'subscriber': subscriber})
 
     def post(self, request, *args, **kwargs):
-        required_fields = ['new_email']
+        subscriber = Subscriber.objects.get(user=request.user)
+        if request.POST['action'] == 'Update Email':
+            required_fields = ['new_email']
 
-        for field in required_fields:
-            if field not in request.POST:
+            for field in required_fields:
+                if field not in request.POST:
+                    return render(request, self.template_name, {
+                        'error': "There was an error with the form",
+                        'subscriber': subscriber})
+
+            for field in required_fields:
+                if not request.POST[field]:
+                    return render(request, self.template_name, {
+                        'error': "A field was missing",
+                        'subscriber': subscriber
+                    })
+
+            email = request.POST['new_email']
+
+            # Quick sanity check
+            users = User.objects.filter(email__iexact=email)
+
+            if users.count():
                 return render(request, self.template_name, {
-                    'error': "There was an error with the form"})
+                    'error': 'That email already exists.',
+                    'subscriber': subscriber})
 
-        for field in required_fields:
-            if not request.POST[field]:
+            else:
+                request.user.email = email
+                request.user.username = email
+                request.user.save()
+
                 return render(request, self.template_name, {
-                    'error': "A field was missing",
-                })
+                    'success': 'Your email has been changed.',
+                    'subscriber': subscriber})
 
-        email = request.POST['new_email']
-
-        # Quick sanity check
-        users = User.objects.filter(email__iexact=email)
-
-        if users.count():
-            return render(request, self.template_name, {
-                'error': 'That email already exists.'})
-
-        else:
-            request.user.email = email
-            request.user.username = email
-            request.user.save()
+        elif request.POST['action'] == 'Update Preferences':
+            subscriber.digest = 'digest' in request.POST
+            subscriber.save()
 
             return render(request, self.template_name, {
-                'success': 'Your email has been changed.'})
+                'success': 'Your preferences have been updated.',
+                'subscriber': subscriber})
 
 
 class UserLogoutView(View):

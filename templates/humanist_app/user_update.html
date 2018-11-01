@@ -16,23 +16,39 @@ User Update
 
 {% block main %}
 <section>
+
+    {% if error %}
+    <p class="error">{{error}}</p>
+    {% endif %}
+
+    {% if success %}
+    <p class="success">{{success}}</p>
+    {% endif %}
+
+
     <p>You are currently subscribed to Humanist using the email address {{request.user.email}}.</p>
 
-    <p>To change this, please type your new email below:</p>
+    <h3>Subscription Preferences</h3>
+    <p>Would you prefer to receive a weekly digest? Check the following box to disable real-time emails.</p>
 
     <form class="user_form" action="" method="post">
         {% csrf_token %}
-        {% if error %}
-        <p class="error">{{error}}</p>
-        {% endif %}
+        <input type="checkbox" name="digest" id="digest" {% if subscriber.digest %}checked="checked"{% endif %}>
+        <label for="digest">Only send digests</label>
+        <input type="submit" name="action" value="Update Preferences">
+    </form>
 
-        {% if success %}
-        <p class="success">{{success}}</p>
-        {% endif %}
+    <h3>Update Email</h3>
 
+
+    <p>To change your email address, please type your new email below:</p>
+
+    <form class="user_form" action="" method="post">
+        {% csrf_token %}
+    
         <strong>New email: </strong>
         <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="new_email">
-        <input type="submit">
+        <input type="submit" name="action" value="Update Email">
     </form>
 </section>
 {% endblock %}

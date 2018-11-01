@@ -257,7 +257,7 @@ a
 
 form.user_form
 {
-    input,
+    input:not([type="checkbox"]),
     textarea
     {
         display: block;
