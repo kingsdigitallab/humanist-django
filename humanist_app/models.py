@@ -215,7 +215,8 @@ class EditedEmail(models.Model):
         blank=False, null=False, auto_now=True)
     subject = models.CharField(blank=True, null=True, max_length=2048)
     sender = models.CharField(blank=False, null=False, max_length=256)
-    incoming = models.ForeignKey(IncomingEmail, on_delete=models.CASCADE)
+    incoming = models.ForeignKey(IncomingEmail, on_delete=models.SET_NULL,
+                                 blank=True, null=True)
 
     class Meta:
         ordering = ['-date_created']
