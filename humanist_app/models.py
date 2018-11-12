@@ -191,7 +191,9 @@ class IncomingEmail(models.Model):
 
     @classmethod
     def get_unused(cls):
-        return cls.objects.filterc(used=False)
+        return cls.objects.filter(
+            used=False).filter(
+            deleted=False)
 
     @classmethod
     def get_used(cls):
