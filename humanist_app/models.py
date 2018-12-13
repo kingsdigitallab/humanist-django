@@ -187,7 +187,7 @@ class IncomingEmail(models.Model):
     def get_deleted(cls):
         return cls.objects.filter(
             deleted=True).filter(
-            purged=False)
+            purged=False).exclude(sender=None)
 
     @classmethod
     def get_unused(cls):
