@@ -1,0 +1,43 @@
+{% load staticfiles %} 
+<html>
+<head>
+<title>Humanist Discussion Group - Volume {{volume}}</title>
+<link rev="made" href="mailto:Willard.McCarty@kcl.ac.uk">
+</head>
+<body background="{% static 'images/strip.gif' %}">
+<center>
+<table border cellpadding=5>
+<td align=center><A HREF="/" border=off><B>Home</B></A></td>
+<td align=center><A HREF="/announcement.html" border=off><B>About</B></A></td> 
+<td align=center> <A
+HREF="/membership_form.php"><B>Subscribe</B></A></td> 
+<td align=center><a href="/search.html"><B>Search</B></a></td>
+<td align=center> <A HREF="/Restricted/"><B>Member Area</B></A></td>
+</table>
+</center>
+<br>
+
+<center><a href="quack.html"><img src="{% static 'images/humanist.gif' %}" alt="Humanist Discussion Group" border=off></a></center><br><br>
+<center>
+    <header><h2>Humanist Archives: Volume {{volume}}</h2></header>
+</center>
+
+
+<ul>
+    {% for edition in editions %}
+    <li><a href="/volume/{{edition.volume}}/{{edition.issue}}">{{edition.date_sent}} Humanist {{edition.volume}}.{{edition.issue}}</a> - {{edition.subject}}</li>
+    {% endfor %}
+</ul>
+
+
+<br><br>
+<p><b>Editor</b>: <a href="http://www.mccarty.org.uk">Willard McCarty</a> (King's College London, U.K.; Western Sydney University, Australia) <br> 
+<b>Software designer</b>: <a href="http://www.mind-crafts.com/aboutus.html">Malgosia Askanas</a> (Mind-Crafts)</p>
+
+<p>This site is <a href="//kdl.kcl.ac.uk/how-we-work/kdl-designed-developed-and-maintained/">maintained</a> under a service level agreement by <a href="//kdl.kcl.ac.uk/">King's Digital Lab</a>.
+
+
+</body>
+
+</html>
+

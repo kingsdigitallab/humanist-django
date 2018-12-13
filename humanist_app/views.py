@@ -744,6 +744,46 @@ class WebAnnouncementView(TemplateView):
 class WebHomepageView(TemplateView):
     template_name = 'legacy/index.html'
 
+    def get(self, request, *args, **kwargs):
+        context = {}
+
+        context['volumes'] = Edition.objects.exclude(
+            volume=None).values_list('volume', flat=True)
+
+        return render(request, self.template_name, context)
+
+
+class WebVolumeView(TemplateView):
+    template_name = 'legacy/volume.html'
+
+    def get(self, request, *args, **kwargs):
+        context = {}
+
+        volume = kwargs['volume']
+        editions = Edition.objects.filter(volume=volume).order_by('issue')
+
+        context['volume'] = volume
+        context['editions'] = editions
+
+        return render(request, self.template_name, context)
+
+
+class WebIssueView(TemplateView):
+    template_name = 'legacy/issue.html'
+
+    def get(self, request, *args, **kwargs):
+        context = {}
+
+        volume = kwargs['volume']
+        issue = kwargs['issue']
+
+        edition = Edition.objects.filter(volume=volume).get(issue=issue)
+
+        context['volume'] = volume
+        context['edition'] = edition
+
+        return render(request, self.template_name, context)
+
 
 class WebLogin(View):
     template_name = 'legacy/restricted_login.html'

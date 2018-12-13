@@ -11,7 +11,7 @@ from .views import (EditorView, EditorTrashView, EditorUsedView,
                     WebAnnouncementView, AttachmentDownloadView,
                     WebHomepageView, WebLogin, WebRestrictedDeniedView,
                     WebQuackView, WebMembershipFormView,
-                    WebForgottenPasswordForm)
+                    WebForgottenPasswordForm, WebVolumeView, WebIssueView)
 
 urlpatterns = [
     # These are the legacy website, which we have not changed
@@ -46,6 +46,11 @@ urlpatterns = [
     path('user/update/', UserUpdateView.as_view()),
     path('user/unsubscribe/', UserUnsubscribeView.as_view()),
     path('user/unsubscribe/confirm/', UserUnsubscribeConfirmView.as_view()),
+
+    # Volume/archive view
+    path('volume/<int:volume>/', WebVolumeView.as_view()),
+    # Issue/archive view
+    path('volume/<int:volume>/<int:issue>/', WebIssueView.as_view()),
 
     # Editor Pages
     path('editor/logout/', UserLogoutView.as_view()),
