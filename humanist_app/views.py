@@ -19,6 +19,7 @@ from django.db.models import Q
 from django.template.loader import render_to_string
 from datetime import datetime
 import textwrap
+from collections import OrderedDict
 
 
 class AttachmentDownloadView(View):
@@ -747,9 +748,9 @@ class WebHomepageView(TemplateView):
     def get(self, request, *args, **kwargs):
         context = {}
 
-        context['volumes'] = Edition.objects.exclude(
-            issue=None).order_by(
-                '-issue').values_list('volume', flat=True).distinct()
+        context['volumes'] = list(OrderedDict.fromkeys(list(
+            Edition.objects.exclude(issue=None).order_by(
+                '-issue').values_list('volume', flat=True))))
 
         return render(request, self.template_name, context)
 
