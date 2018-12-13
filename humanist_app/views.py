@@ -748,7 +748,7 @@ class WebHomepageView(TemplateView):
         context = {}
 
         context['volumes'] = Edition.objects.exclude(
-            volume=None).values_list('volume', flat=True)
+            volume=None).values_list('volume', flat=True).distinct()
 
         return render(request, self.template_name, context)
 
