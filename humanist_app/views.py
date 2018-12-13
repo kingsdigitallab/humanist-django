@@ -115,9 +115,15 @@ class EditorView(View):
                         for eid in email_ids:
                             email = IncomingEmail.objects.get(id=eid)
 
+                            email_body = email.body.split('\n')
+                            for i in range(0, len(email_body)):
+                                email_body[i] = textwrap.fill(
+                                    email_body[i], 80)
+
+                            email_body_str = '\n'.join(email_body)
                             edited_email = EditedEmail()
                             edited_email.edition = edition
-                            edited_email.body = textwrap.fill(email.body, 80)
+                            edited_email.body = email_body_str
                             edited_email.subject = email.subject
                             edited_email.sender = email.sender
                             edited_email.incoming = email
