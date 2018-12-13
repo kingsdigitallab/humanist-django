@@ -18,6 +18,7 @@ from django.db.models import Q
 
 from django.template.loader import render_to_string
 from datetime import datetime
+import textwrap
 
 
 class AttachmentDownloadView(View):
@@ -115,7 +116,7 @@ class EditorView(View):
 
                             edited_email = EditedEmail()
                             edited_email.edition = edition
-                            edited_email.body = email.body
+                            edited_email.body = textwrap.fill(email.body, 80)
                             edited_email.subject = email.subject
                             edited_email.sender = email.sender
                             edited_email.incoming = email
