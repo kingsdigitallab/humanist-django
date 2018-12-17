@@ -111,7 +111,7 @@ class EditorView(View):
 
                         edition = Edition()
                         edition.save()
-
+                        order_no = 1
                         for eid in email_ids:
                             email = IncomingEmail.objects.get(id=eid)
 
@@ -127,7 +127,10 @@ class EditorView(View):
                             edited_email.subject = email.subject
                             edited_email.sender = email.sender
                             edited_email.incoming = email
+                            edited_email.order_no = order_no
                             edited_email.save()
+
+                            order_no = order_no + 1
 
                             email.used = True
                             email.save()
@@ -200,6 +203,7 @@ class EditorEditionsSingleView(View):
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
+
         edition = Edition.objects.get(id=kwargs['edition_id'])
         if 'action' in request.POST:
             if request.POST['action'] == 'Save':
@@ -242,6 +246,32 @@ class EditorEditionsSingleView(View):
             else:
                 # Unknown method
                 pass
+        elif 'up' in request.POST:
+            email_to_move = EditedEmail.objects.get(id=request.POST['up'])
+            email_to_swap = edition.editedemail_set.filter(
+                order_no__lt=email_to_move.order_no).last()
+            email_to_move.swap_order(email_to_swap)
+
+            edition.subject = request.POST['subject']
+            edition.save()
+            for email in edition.editedemail_set.all():
+                email.sender = request.POST['sender_{}'.format(email.id)]
+                email.subject = request.POST['subject_{}'.format(email.id)]
+                email.body = request.POST['body_{}'.format(email.id)]
+                email.save()
+
+        elif 'down' in request.POST:
+            email_to_move = EditedEmail.objects.get(id=request.POST['down'])
+            email_to_swap = edition.editedemail_set.filter(
+                order_no__gt=email_to_move.order_no).first()
+            email_to_move.swap_order(email_to_swap)
+            edition.subject = request.POST['subject']
+            edition.save()
+            for email in edition.editedemail_set.all():
+                email.sender = request.POST['sender_{}'.format(email.id)]
+                email.subject = request.POST['subject_{}'.format(email.id)]
+                email.body = request.POST['body_{}'.format(email.id)]
+                email.save()
         return self.get(request, *args, **kwargs)
 
 

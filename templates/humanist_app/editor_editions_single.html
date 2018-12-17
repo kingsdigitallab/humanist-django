@@ -44,7 +44,19 @@ View/Edit Edition
             <!-- emails -->
             {% for email in edition.editedemail_set.all %}
             <tr>
-                <td><input type="checkbox" name="email_id" value="{{email.id}}"></td>
+                <td><input type="checkbox" name="email_id" value="{{email.id}}">
+                
+                <div class="controls">
+                    {% if not forloop.first %}
+                        <button type="submit" name="up" value="{{email.id}}">&uarr;</button>
+                    {% endif %}
+
+                    {% if not forloop.last %}
+                        <button type="submit" name="down" value="{{email.id}}">&darr;</button>
+                    {% endif %}
+                </div>
+                
+                </td>
                 <td ><input name="sender_{{email.id}}" value="{{ email.sender }}"></td>
                 <td><input name="subject_{{email.id}}" value="{{ email.subject }}"></td>
                 <td>

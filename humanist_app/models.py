@@ -79,6 +79,7 @@ class Edition(models.Model):
     sent = models.BooleanField(blank=False, default=False)
     volume = models.IntegerField(blank=True, null=True)
     issue = models.IntegerField(blank=True, null=True)
+    manual_edit = models.BooleanField(blank=False, default=False)
 
     class Meta:
         ordering = ['-date_created']
@@ -92,7 +93,7 @@ class Edition(models.Model):
         return cls.objects.filter(sent=True)
 
     def __str__(self):
-        return self.subject
+        return '{}'.format(self.subject)
 
     # Note: whilst unconventional, this allows us to add extra
     # data into the final script
@@ -100,7 +101,7 @@ class Edition(models.Model):
         data = {}
         data['emails'] = []
         number = 1
-        for e in self.editedemail_set.order_by('subject').all():
+        for e in self.editedemail_set.order_by('order_no', 'subject').all():
             email = {}
             email['number'] = number
             number += 1
@@ -226,8 +227,10 @@ class EditedEmail(models.Model):
     incoming = models.ForeignKey(IncomingEmail, on_delete=models.CASCADE,
                                  blank=True, null=True)
 
+    order_no = models.IntegerField(blank=True, null=True)
+
     class Meta:
-        ordering = ['-date_created']
+        ordering = ['order_no', 'subject']
 
     @property
     def attachments(self):
@@ -239,6 +242,14 @@ class EditedEmail(models.Model):
 
     def __str__(self):
         return '{} - {}'.format(self.sender, self.subject)
+
+    def swap_order(self, email):
+        current_order = self.order_no
+        self.order_no = email.order_no
+        email.order_no = current_order
+
+        email.save()
+        self.save()
 
 
 class Attachment(models.Model):
