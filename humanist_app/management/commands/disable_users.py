@@ -9,7 +9,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         list_to_disable = Subscriber.objects.filter(
             user__is_active=True).filter(
-            bounce_count__gte=10).filter(
+            bounce_count__gte=60).filter(
             bounce_disabled=False)
 
         for u in list_to_disable.all():
