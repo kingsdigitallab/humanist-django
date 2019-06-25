@@ -52,6 +52,12 @@ Users
             <input type="hidden" name="id" value="{{user.user.id}}">
             <input type="submit" name="action" value="Promote to Admin">
             <input type="submit" name="action" value="Remove">
+            {% if user.bounce_disabled %}
+            <p><strong><em>This user has been disabled as we have received multiple
+            "bounces" from their email provider.</em></strong></p>
+            <input type="submit" name="action" value="Re-enable">
+            {% endif %}
+
         </form>
         {% endif %}
 

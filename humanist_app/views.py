@@ -65,6 +65,8 @@ class EditorView(View):
         editions = {}
         editions['drafts'] = Edition.get_drafts()
         editions['sent'] = Edition.get_sent()[:3]
+        editions['drafts_not_manual'] = editions['drafts'].exclude(
+            manual_edit=True)
 
         emails = {}
         emails['inbox'] = IncomingEmail.get_available()
@@ -78,6 +80,7 @@ class EditorView(View):
         context['emails'] = emails
         context['email_display'] = email_display
         context['editions'] = editions
+        
         context['user_counts'] = user_counts
         context['users_inactive'] = users_inactive
 
@@ -501,6 +504,24 @@ class EditorUsersView(View):
         elif action == "Remove":
             user.delete()
             context['success'] = "Deleted: {}".format(user.email)
+
+        elif action == "Re-enable":
+            subscriber = Subscriber.objects.get(user=user)
+            subscriber.bounce_count = 0
+            subscriber.bounce_disabled = False
+            subscriber.save()
+
+            user_list = '\n'.join(Subscriber.objects.filter(
+                                  user__is_active=True).filter(
+                                  bounce_disabled=False).filter(
+                                  digest=False).values_list(
+                                  'user__email', flat=True))
+            try:
+                with open(settings.EMAIL_ALLOW_LIST, 'w') as f:
+                    f.write(user_list)
+            except IOError:
+                pass
+
 
         if 'q' in request.GET:
             q = request.GET.get('q')
