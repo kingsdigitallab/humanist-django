@@ -13,7 +13,7 @@ def require_user(function):
                 request.get_full_path()))
 
     wrap.__doc__ = function.__doc__
-    wrap.__name__ = function.__name__
+#    wrap.__name__ = function.__name__
     return wrap
 
 
@@ -29,5 +29,5 @@ def require_editor(function):
                 request.get_full_path()))
 
     wrap.__doc__ = function.__doc__
-    wrap.__name__ = function.__name__
+#    wrap.__name__ = function.__name__
     return wrap
