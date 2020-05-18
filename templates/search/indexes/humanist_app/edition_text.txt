@@ -1,4 +1,4 @@
-{{ object }}
+{{ object.subject }}
 
 {% if object.data.emails|length > 1 %}{% for email in object.data.emails %}
     [{{ email.number }}]    From: {{ email.sender|safe }}
