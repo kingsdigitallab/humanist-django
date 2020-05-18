@@ -20,6 +20,7 @@ from django.template.loader import render_to_string
 from datetime import datetime
 import textwrap
 from collections import OrderedDict
+from haystack.query import SearchQuerySet
 
 
 class AttachmentDownloadView(View):
@@ -80,7 +81,7 @@ class EditorView(View):
         context['emails'] = emails
         context['email_display'] = email_display
         context['editions'] = editions
-        
+
         context['user_counts'] = user_counts
         context['users_inactive'] = users_inactive
 
@@ -522,7 +523,6 @@ class EditorUsersView(View):
             except IOError:
                 pass
 
-
         if 'q' in request.GET:
             q = request.GET.get('q')
             context['q'] = q
@@ -904,6 +904,35 @@ class WebLogin(View):
             it will be reviewed by an administrator shortly.'})
 
 
+class WebSearchView(TemplateView):
+    template_name = 'legacy/search.html'
+
+    def get(self, request, *args, **kwargs):
+        context = {}
+
+        q = request.GET.get('q')
+        page = request.GET.get('page')
+
+        if not page:
+            page = 1
+        else:
+            page = int(page)
+
+        sqs = SearchQuerySet().all().filter(text=q)
+
+        results_count = sqs.count()
+
+        paginator = Paginator(sqs, 20)
+        results = paginator.page(page)
+
+        context['q'] = q
+        context['results_count'] = results_count
+        context['results'] = results
+        context['page_count'] = paginator.num_pages
+
+        return render(request, self.template_name, context)
+
+
 class WebQuackView(TemplateView):
     template_name = 'legacy/quack.html'
 
@@ -1075,7 +1104,6 @@ class WebForgottenPasswordForm(View):
         if user.count():
             user = user[0]
             sub = Subscriber.objects.filter(user=user)[0]
-            print(sub)
             sub.generate_password_reset_key()
             success = 'Please check your email.'
         else:

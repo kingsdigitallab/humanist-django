@@ -96,6 +96,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_extensions',
     'compressor',
+    'haystack',
+
 ]
 
 INSTALLED_APPS += [    # your project apps here
@@ -165,6 +167,16 @@ LOGGING = {
     }
 }
 
+# Haystack.
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.elasticsearch2_backend.Elasticsearch2SearchEngine',  # noqa
+        'URL': 'http://127.0.0.1:9200/',
+        'INDEX_NAME': 'humanist',
+    },
+}
+HAYSTACK_SEARCH_RESULTS_PER_PAGE = None
+
 MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -233,7 +245,7 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 
-MEDIA_URL = STATIC_URL + 'media/'
+MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_URL.strip('/'))
 
 if not os.path.exists(MEDIA_ROOT):

@@ -1,4 +1,4 @@
-django == 2.0
+django == 2.2
 django-compressor
 django-extensions
 django-libsass
@@ -7,3 +7,6 @@ django-redis
 psycopg2-binary
 redis
 python-dateutil
+beautifulsoup4
+django-haystack
+elasticsearch>=2.0.0,<3.0.0

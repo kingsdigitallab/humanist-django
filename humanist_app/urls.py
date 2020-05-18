@@ -10,7 +10,7 @@ from .views import (EditorView, EditorTrashView, EditorUsedView,
                     UserChangePasswordView, WebResetPasswordView,
                     WebAnnouncementView, AttachmentDownloadView,
                     WebHomepageView, WebLogin, WebRestrictedDeniedView,
-                    WebQuackView, WebMembershipFormView,
+                    WebQuackView, WebMembershipFormView, WebSearchView,
                     WebForgottenPasswordForm, WebVolumeView, WebIssueView)
 
 urlpatterns = [
@@ -51,6 +51,10 @@ urlpatterns = [
     path('volume/<int:volume>/', WebVolumeView.as_view()),
     # Issue/archive view
     path('volume/<int:volume>/<int:issue>/', WebIssueView.as_view()),
+
+    # Search View
+    path('search.html', WebSearchView.as_view()),
+
 
     # Editor Pages
     path('editor/logout/', UserLogoutView.as_view()),

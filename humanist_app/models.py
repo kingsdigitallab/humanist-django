@@ -283,3 +283,20 @@ class Attachment(models.Model):
 
     def __str__(self):
         return '{} ({})'.format(self.original_filename, self.email)
+
+
+class ArchiveEmail(models.Model):
+    body = models.TextField()
+    filename = models.CharField(max_length=2048,
+                                blank=False,
+                                null=False)
+
+    class Meta:
+        ordering = ['id']
+
+    @property
+    def url(self):
+        return self.filename
+
+    def __str__(self):
+        return 'Archived Email ({})'.format(self.filename)

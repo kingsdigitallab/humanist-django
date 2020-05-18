@@ -1,0 +1,20 @@
+{{ object }}
+
+{% if object.data.emails|length > 1 %}{% for email in object.data.emails %}
+    [{{ email.number }}]    From: {{ email.sender|safe }}
+           Subject: {{ email.message.subject|safe }} ({{ email.line_count}})
+{% endfor %}{% endif %}
+
+{% for email in object.data.emails %}{% if object.data.emails|length > 1 %}--[{{ email.number }}]------------------------------------------------------------------------{% endif %}
+        Date: {{ email.incoming.date|safe }}
+        From: {{ email.sender|safe }}
+        Subject: {{ email.message.subject|safe }}
+
+{{ email.message.body|safe }}
+{% if email.message.attachments %}
+
+Attachments:
+{% for att in email.message.attachments %}{{ att.original_filename }}: https://dhhumanist.org{{ att.url }} 
+{% endfor %}
+{% endif %}
+{% endfor %}
