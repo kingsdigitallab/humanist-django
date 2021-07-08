@@ -1,9 +1,9 @@
 from django.core.mail import send_mail, get_connection  # noqa
 from django.contrib.auth.models import User
 from django.conf import settings
+
+
 # Send a single email
-
-
 class Email():
     to = None
     sender = None
@@ -12,8 +12,8 @@ class Email():
 
     def send(self):
         if self.to and self.sender and self.subject and self.body:
-            connection = get_connection(host='smtp.kdl.kcl.ac.uk',
-                                        port=25)
+            connection = get_connection(host=settings.EMAIL_HOST,
+                                        port=settings.EMAIL_PORT)
             try:
                 if not type(self.to) == 'list':
                     self.to = [self.to]
